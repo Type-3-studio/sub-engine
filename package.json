@@ -8,7 +8,7 @@
     "pixi.js": "^8.19.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview"
   },

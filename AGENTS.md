@@ -35,15 +35,26 @@ src/
     schemas.js      # Schema definitions + validation
     MapLoader.js    # 2D JSON matrix → walkable grid
     FlowFieldNav.js # BFS + differentiation flow field pathfinding
-  game/systems/     # Stateless system functions
-    MovementSystem.js
-    CombatSystem.js
+  game/
+    config/
+      towerDefense.js  # Tower types, waves, map layout, waypoints
+    systems/         # Stateless system functions
+      MovementSystem.js
+      CombatSystem.js
+      EnemySystem.js     # Path following + lives
+      TowerSystem.js     # Targeting + firing
+      ProjectileSystem.js # Homing + damage + rewards
+      WaveSystem.js      # Wave spawning + completion
   simulation/
     simRunner.js    # Headless game loop
-  client/           # PixiJS view bridge
-    PixiViewBridge.js  # Sprite pool, sync, lerp render
-    main.js            # PIXI app, game loop entry point
-index.html          # Vite entry
+  client/
+    PixiViewBridge.js  # Sprite pool, sync, lerp render (legacy)
+    main.js            # PIXI app entry (legacy Phase 4)
+    towerDefense/
+      main.js         # Tower defense entry point
+      gameScene.js    # Map, placement, game loop, entity visuals
+      ui.js           # HUD + build menu
+index.html          # Vite entry (loads tower defense)
 testRegistry.js     # Phase 1 validation script
 testNavigation.js   # Phase 3 validation script
 state.md            # Progress tracking
@@ -62,6 +73,6 @@ AGENTS.md           # This file — agent conventions
 node testRegistry.js           # Phase 1: registry/schema unit tests
 node src/simulation/simRunner.js  # Phase 2: headless simulation
 node testNavigation.js         # Phase 3: map/flow field tests
-npm run dev                    # Phase 4: PIXI client (browser)
+npm run dev                    # Tower defense (browser)
 ```
 All scripts exit with code 0 on pass, 1 on failure.
