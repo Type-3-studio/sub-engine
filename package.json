@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node tests/testRegistry.js && node tests/testNavigation.js && node tests/simRunner.js"
   },
   "devDependencies": {
     "vite": "^8.1.3"

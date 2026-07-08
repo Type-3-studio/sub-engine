@@ -29,50 +29,66 @@
 
 ```
 src/
-  engine/           # Core ECS: Registry, schemas, validation
-    index.js        # Barrel exports
-    Registry.js     # Entity/component store
-    schemas.js      # Schema definitions + validation
-    MapLoader.js    # 2D JSON matrix → walkable grid
-    FlowFieldNav.js # BFS + differentiation flow field pathfinding
-  game/
+  engine/             # ★ Core ECS — copy as-is, never edit
+    index.js
+    Registry.js
+    schemas.js
+  common/             # ★ Reusable utilities — import, extend, improve
+    index.js
+    responsive.js     #   Responsive scaling for any screen
+  game/               # ★ GAME FOLDER — replace entirely for new games
     config/
-      towerDefense.js  # Tower types, waves, map layout, waypoints
-    systems/         # Stateless system functions
-      MovementSystem.js
-      CombatSystem.js
-      EnemySystem.js     # Path following + lives
-      TowerSystem.js     # Targeting + firing
-      ProjectileSystem.js # Homing + damage + rewards
-      WaveSystem.js      # Wave spawning + completion
-  simulation/
-    simRunner.js    # Headless game loop
-  client/
-    PixiViewBridge.js  # Sprite pool, sync, lerp render (legacy)
-    main.js            # PIXI app entry (legacy Phase 4)
+      towerDefense.js
+    systems/
+      EnemySystem.js
+      TowerSystem.js
+      ProjectileSystem.js
+      WaveSystem.js
+  client/             # ★ GAME FOLDER — replace entirely for new games
     towerDefense/
-      main.js         # Tower defense entry point
-      gameScene.js    # Map, placement, game loop, entity visuals
-      ui.js           # HUD + build menu
-index.html          # Vite entry (loads tower defense)
-testRegistry.js     # Phase 1 validation script
-testNavigation.js   # Phase 3 validation script
-state.md            # Progress tracking
-AGENTS.md           # This file — agent conventions
+      main.js
+      gameScene.js
+      ui.js
+demos/                # Legacy demos (Phase 4 reference)
+  phase4/
+    PixiViewBridge.js
+    main.js
+index.html            # Vite entry
+tests/
+  testRegistry.js
+  testNavigation.js
+  simRunner.js
+state.md              # Progress tracking
+AGENTS.md             # This file — agent conventions
+```
+
+### Template usage
+To start a new game:
+```bash
+cp -r /path/to/sub /path/to/new-game
+# Then replace src/game/ and src/client/ with your game's code
+# Keep src/engine/ and src/common/ as-is
 ```
 
 ### System Conventions
 - Systems are standalone exported functions: `function name(registry) { ...; return registry }`
 - Systems never hold internal state — they read from registry, mutate via `addComponent`, return the registry
-- System ordering is managed by the caller (e.g. `simRunner.js`); systems themselves don't know about each other
+- System ordering is managed by the caller (e.g. `gameScene.js`); systems themselves don't know about each other
 - Cross-system communication happens through shared component data only
 - Systems use `getEntitiesWith` to filter, `getComponent` to read, `addComponent` to write
 
+### Critical PixiJS Input Rule
+When the game uses a scaled virtual container for responsive layout:
+- Do NOT attach pointer handlers to children of the scaled container
+- Do NOT use `hitArea` on the scaled container or transparent overlays
+- Instead: listen on `app.stage`, convert via `container.toLocal(new Point(e.clientX, e.clientY), app.stage)`, then check bounds manually
+- This reliably handles all transforms (scale, position) without coordinate drift
+
 ## Running Tests
 ```bash
-node testRegistry.js           # Phase 1: registry/schema unit tests
-node src/simulation/simRunner.js  # Phase 2: headless simulation
-node testNavigation.js         # Phase 3: map/flow field tests
-npm run dev                    # Tower defense (browser)
+node tests/testRegistry.js              # Engine unit tests
+node tests/testNavigation.js            # Map/flow field tests
+node tests/simRunner.js                 # Headless simulation
+npm run dev                             # Tower defense (browser)
 ```
 All scripts exit with code 0 on pass, 1 on failure.
