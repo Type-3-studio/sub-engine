@@ -33,10 +33,16 @@ src/
     index.js        # Barrel exports
     Registry.js     # Entity/component store
     schemas.js      # Schema definitions + validation
-  game/systems/     # Stateless system functions (Phase 2)
-  simulation/       # Headless game loop (Phase 2)
+    MapLoader.js    # 2D JSON matrix → walkable grid
+    FlowFieldNav.js # BFS + differentiation flow field pathfinding
+  game/systems/     # Stateless system functions
+    MovementSystem.js
+    CombatSystem.js
+  simulation/
+    simRunner.js    # Headless game loop
   client/           # PixiJS view bridge (Phase 4)
 testRegistry.js     # Phase 1 validation script
+testNavigation.js   # Phase 3 validation script
 state.md            # Progress tracking
 AGENTS.md           # This file — agent conventions
 ```
@@ -52,5 +58,6 @@ AGENTS.md           # This file — agent conventions
 ```bash
 node testRegistry.js           # Phase 1: registry/schema unit tests
 node src/simulation/simRunner.js  # Phase 2: headless simulation
+node testNavigation.js         # Phase 3: map/flow field tests
 ```
 All scripts exit with code 0 on pass, 1 on failure.
