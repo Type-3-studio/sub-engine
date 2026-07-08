@@ -40,7 +40,10 @@ src/
     CombatSystem.js
   simulation/
     simRunner.js    # Headless game loop
-  client/           # PixiJS view bridge (Phase 4)
+  client/           # PixiJS view bridge
+    PixiViewBridge.js  # Sprite pool, sync, lerp render
+    main.js            # PIXI app, game loop entry point
+index.html          # Vite entry
 testRegistry.js     # Phase 1 validation script
 testNavigation.js   # Phase 3 validation script
 state.md            # Progress tracking
@@ -59,5 +62,6 @@ AGENTS.md           # This file — agent conventions
 node testRegistry.js           # Phase 1: registry/schema unit tests
 node src/simulation/simRunner.js  # Phase 2: headless simulation
 node testNavigation.js         # Phase 3: map/flow field tests
+npm run dev                    # Phase 4: PIXI client (browser)
 ```
 All scripts exit with code 0 on pass, 1 on failure.
