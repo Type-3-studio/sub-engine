@@ -1,0 +1,7 @@
+{
+  "name": "sub-engine",
+  "version": "0.1.0",
+  "description": "AI-first, pure-data ECS 2D engine",
+  "type": "module",
+  "private": true
+}
