@@ -41,8 +41,16 @@ state.md            # Progress tracking
 AGENTS.md           # This file — agent conventions
 ```
 
+### System Conventions
+- Systems are standalone exported functions: `function name(registry) { ...; return registry }`
+- Systems never hold internal state — they read from registry, mutate via `addComponent`, return the registry
+- System ordering is managed by the caller (e.g. `simRunner.js`); systems themselves don't know about each other
+- Cross-system communication happens through shared component data only
+- Systems use `getEntitiesWith` to filter, `getComponent` to read, `addComponent` to write
+
 ## Running Tests
 ```bash
-node testRegistry.js
+node testRegistry.js           # Phase 1: registry/schema unit tests
+node src/simulation/simRunner.js  # Phase 2: headless simulation
 ```
-All tests exit with code 0 on pass, 1 on failure.
+All scripts exit with code 0 on pass, 1 on failure.
