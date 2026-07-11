@@ -18,9 +18,13 @@
     "dev:serial": "vite games/serialization-demo --host",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node tests/testRegistry.js && node tests/testNavigation.js && node tests/simRunner.js"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx tests/testRegistry.ts && tsx tests/testNavigation.ts && tsx tests/simRunner.ts"
   },
   "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0",
     "vite": "^8.1.3"
   }
 }
