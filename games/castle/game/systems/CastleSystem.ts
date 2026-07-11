@@ -5,11 +5,14 @@ import { BUILDING_DEFS, FOOD_CONSUMPTION_RATES, HAPPINESS_RATION_BONUSES } from 
 import type { BuildingDef } from '../config/castle.js'
 
 export function castleSystem(registry: Registry<CastleComponents>): Registry<CastleComponents> {
-  const states = registry.getEntitiesWith([SCHEMA.GAME_STATE])
-  if (!states.length) return registry
-  const gsId = states[0]!.id
-  const gs = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-  if (!gs) return registry
+  const ents = registry.getEntitiesWith([SCHEMA.ECONOMY, SCHEMA.POPULATION, SCHEMA.HAPPINESS])
+  if (!ents.length) return registry
+  const eid = ents[0]!.id
+
+  const economy = registry.getComponent(eid, SCHEMA.ECONOMY)
+  const population = registry.getComponent(eid, SCHEMA.POPULATION)
+  const happinessComp = registry.getComponent(eid, SCHEMA.HAPPINESS)
+  if (!economy || !population || !happinessComp) return registry
 
   const buildings = registry.getEntitiesWith([SCHEMA.BUILDING, SCHEMA.POSITION])
 
@@ -45,60 +48,54 @@ export function castleSystem(registry: Registry<CastleComponents>): Registry<Cas
     if (def.type === 'castle') castlePrestige += (def.prestigePerLevel?.[lv] ?? 0)
   }
 
-  const workers = Math.max(0, gs.population - gs.soldiers)
+  const workers = Math.max(0, population.population - population.soldiers)
   const farmWorkers = Math.min(workers, totalFarmWorkerSlots)
   const mineWorkers = Math.min(workers - farmWorkers, totalMineWorkerSlots)
 
   const foodProduction = farmWorkers * totalProductionPerFarmWorker
   const goldMining = mineWorkers * totalProductionPerMineWorker
-  const rationMult = FOOD_CONSUMPTION_RATES[gs.foodRations] ?? 1.0
-  const foodConsumption = Math.round(gs.population * rationMult * 10) / 10
+  const rationMult = FOOD_CONSUMPTION_RATES[economy.foodRations] ?? 1.0
+  const foodConsumption = Math.round(population.population * rationMult * 10) / 10
 
-  let newFood = gs.food + foodProduction - foodConsumption
+  let newFood = economy.food + foodProduction - foodConsumption
   let starved = false
   if (newFood < 0) {
     newFood = 0
     starved = true
   }
 
-  const taxGold = Math.round(gs.population * (gs.taxRate / 100) * 2 * 10) / 10
-  const newGold = Math.round((gs.gold + goldMining + taxGold) * 10) / 10
+  const taxGold = Math.round(population.population * (economy.taxRate / 100) * 2 * 10) / 10
+  const newGold = Math.round((economy.gold + goldMining + taxGold) * 10) / 10
 
-  const overcrowding = gs.population > maxPopulation && maxPopulation > 0
-  const foodBonus = starved ? -20 : (gs.food >= foodConsumption ? 15 : 5)
-  const taxPenalty = -(gs.taxRate / 50) * 20
+  const overcrowding = population.population > maxPopulation && maxPopulation > 0
+  const foodBonus = starved ? -20 : (economy.food >= foodConsumption ? 15 : 5)
+  const taxPenalty = -(economy.taxRate / 50) * 20
   const overcrowdingPenalty = overcrowding ? -20 : 0
-  const rationBonus = HAPPINESS_RATION_BONUSES[gs.foodRations] ?? 0
+  const rationBonus = HAPPINESS_RATION_BONUSES[economy.foodRations] ?? 0
 
-  let happiness = 50 + foodBonus + taxPenalty + gardenHappiness + overcrowdingPenalty + castlePrestige + rationBonus
-  happiness = Math.max(0, Math.min(100, Math.round(happiness)))
+  let newHappiness = 50 + foodBonus + taxPenalty + gardenHappiness + overcrowdingPenalty + castlePrestige + rationBonus
+  newHappiness = Math.max(0, Math.min(100, Math.round(newHappiness)))
 
-  let newPopulation = gs.population
-  if (happiness < 50) {
-    const leaving = Math.max(1, Math.floor(gs.population * 0.03))
-    newPopulation = Math.max(1, gs.population - leaving)
-  } else if (gs.food >= foodConsumption && gs.population < maxPopulation) {
+  let newPopulation = population.population
+  if (newHappiness < 50) {
+    const leaving = Math.max(1, Math.floor(population.population * 0.03))
+    newPopulation = Math.max(1, population.population - leaving)
+  } else if (economy.food >= foodConsumption && population.population < maxPopulation) {
     if (Math.random() < 0.3) {
-      newPopulation = Math.min(maxPopulation, gs.population + 1)
+      newPopulation = Math.min(maxPopulation, population.population + 1)
     }
   }
 
-  let newSoldiers = gs.soldiers
-  if (newPopulation < gs.soldiers) {
-    newSoldiers = Math.max(0, gs.soldiers - (gs.soldiers - newPopulation))
+  let newSoldiers = population.soldiers
+  if (newPopulation < population.soldiers) {
+    newSoldiers = Math.max(0, population.soldiers - (population.soldiers - newPopulation))
   }
 
-  registry.addComponent(gsId, SCHEMA.GAME_STATE, {
-    population: newPopulation,
-    maxPopulation,
-    soldiers: newSoldiers,
-    maxSoldiers,
-    happiness,
+  registry.addComponent(eid, SCHEMA.ECONOMY, {
     food: newFood,
     gold: newGold,
-    taxRate: gs.taxRate,
-    foodRations: gs.foodRations,
-    day: gs.day + 1,
+    taxRate: economy.taxRate,
+    foodRations: economy.foodRations,
     workers,
     farmWorkers,
     mineWorkers,
@@ -107,8 +104,20 @@ export function castleSystem(registry: Registry<CastleComponents>): Registry<Cas
     goldMining,
     taxGold,
     starved,
+  })
+
+  registry.addComponent(eid, SCHEMA.POPULATION, {
+    population: newPopulation,
+    maxPopulation,
+    soldiers: newSoldiers,
+    maxSoldiers,
     totalFarmWorkerSlots,
     totalMineWorkerSlots,
+  })
+
+  registry.addComponent(eid, SCHEMA.HAPPINESS, {
+    happiness: newHappiness,
+    day: happinessComp.day + 1,
   })
 
   return registry

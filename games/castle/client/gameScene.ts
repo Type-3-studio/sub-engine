@@ -13,6 +13,29 @@ import type { BuildingDef } from '../game/config/castle.js'
 
 const PERSON_SPEED = 0.4
 
+export interface CastleState {
+  population: number
+  maxPopulation: number
+  soldiers: number
+  maxSoldiers: number
+  happiness: number
+  food: number
+  gold: number
+  taxRate: number
+  foodRations: number
+  day: number
+  workers: number
+  farmWorkers: number
+  mineWorkers: number
+  foodProduction: number
+  foodConsumption: number
+  goldMining: number
+  taxGold: number
+  starved: boolean
+  totalFarmWorkerSlots: number
+  totalMineWorkerSlots: number
+}
+
 interface VisualEntry {
   container: Container
   prevX: number
@@ -28,7 +51,7 @@ interface BuildingVisual {
 }
 
 interface UIHandle {
-  update(state: CastleComponents['GameState'] | null): void
+  update(state: CastleState | null): void
 }
 
 export function createGameScene(container: Container, app: Application, gameW: number, gameH: number) {
@@ -52,19 +75,24 @@ export function createGameScene(container: Container, app: Application, gameW: n
   let running = true
   let tickAcc = 0
 
-  function initGameState(): void {
-    const gsId = registry.createEntity()
-    registry.addComponent(gsId, SCHEMA.GAME_STATE, {
-      population: STARTING_POPULATION,
-      maxPopulation: 0,
-      soldiers: 0,
-      maxSoldiers: 0,
-      happiness: 60,
+  function getStateId(): number | null {
+    const ents = registry.getEntitiesWith([SCHEMA.ECONOMY])
+    return ents.length ? ents[0]!.id : null
+  }
+
+  function getState(): CastleState | null {
+    const ents = registry.getEntitiesWith([SCHEMA.ECONOMY, SCHEMA.POPULATION, SCHEMA.HAPPINESS])
+    if (!ents.length) return null
+    const e = ents[0]!
+    return { ...e.Economy, ...e.Population, ...e.Happiness }
+  }
+
+  function initGameState(eid: number): void {
+    registry.addComponent(eid, SCHEMA.ECONOMY, {
       food: STARTING_FOOD,
       gold: STARTING_GOLD,
       taxRate: STARTING_TAX_RATE,
       foodRations: 1,
-      day: 0,
       workers: 0,
       farmWorkers: 0,
       mineWorkers: 0,
@@ -73,8 +101,18 @@ export function createGameScene(container: Container, app: Application, gameW: n
       goldMining: 0,
       taxGold: 0,
       starved: false,
+    })
+    registry.addComponent(eid, SCHEMA.POPULATION, {
+      population: STARTING_POPULATION,
+      maxPopulation: 0,
+      soldiers: 0,
+      maxSoldiers: 0,
       totalFarmWorkerSlots: 0,
       totalMineWorkerSlots: 0,
+    })
+    registry.addComponent(eid, SCHEMA.HAPPINESS, {
+      happiness: 60,
+      day: 0,
     })
   }
 
@@ -295,11 +333,6 @@ export function createGameScene(container: Container, app: Application, gameW: n
     }
   }
 
-  function getState(): CastleComponents['GameState'] | null {
-    const st = registry.getEntitiesWith([SCHEMA.GAME_STATE])
-    return st.length ? st[0]!.GameState : null
-  }
-
   function tick(): void {
     if (!running) return
     tickCount++
@@ -311,7 +344,8 @@ export function createGameScene(container: Container, app: Application, gameW: n
     }
   }
 
-  initGameState()
+  const gsId = registry.createEntity()
+  initGameState(gsId)
   createBuildings()
   spawnPeople(STARTING_POPULATION)
   castleSystem(registry)
@@ -336,11 +370,10 @@ export function createGameScene(container: Container, app: Application, gameW: n
   const gameInterface = {
     getState,
     upgradeType(type: string): boolean {
-      const gs = registry.getEntitiesWith([SCHEMA.GAME_STATE])
-      if (!gs.length) return false
-      const gsId = gs[0]!.id
-      const state = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      if (!state) return false
+      const eid = getStateId()
+      if (!eid) return false
+      const economy = registry.getComponent(eid, SCHEMA.ECONOMY)
+      if (!economy) return false
       const def = defForType(type)
       if (!def) return false
       const buildings = registry.getEntitiesWith([SCHEMA.BUILDING])
@@ -349,66 +382,55 @@ export function createGameScene(container: Container, app: Application, gameW: n
       const currentLevel = typeBuildings[0]!.Building.level
       if (currentLevel >= 3) return false
       const cost = def.upgradeCosts[currentLevel]!
-      if (state.gold < cost) return false
-      registry.addComponent(gsId, SCHEMA.GAME_STATE, { ...state, gold: Math.round((state.gold - cost) * 10) / 10 })
+      if (economy.gold < cost) return false
+      registry.addComponent(eid, SCHEMA.ECONOMY, { ...economy, gold: Math.round((economy.gold - cost) * 10) / 10 })
       for (const b of typeBuildings) {
         registry.addComponent(b.id, SCHEMA.BUILDING, { ...b.Building, level: currentLevel + 1 })
       }
       syncBuildings()
-      const newState = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      uiRef?.update(newState ?? null)
+      uiRef?.update(getState())
       return true
     },
     recruitSoldier(): boolean {
-      const gs = registry.getEntitiesWith([SCHEMA.GAME_STATE])
-      if (!gs.length) return false
-      const gsId = gs[0]!.id
-      const state = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      if (!state) return false
-      if (state.soldiers >= state.maxSoldiers) return false
-      if (state.population <= state.soldiers + 1) return false
-      if (state.gold < RECRUIT_GOLD_COST) return false
-      registry.addComponent(gsId, SCHEMA.GAME_STATE, {
-        ...state,
-        soldiers: state.soldiers + 1,
-        gold: Math.round((state.gold - RECRUIT_GOLD_COST) * 10) / 10,
-      })
-      const newState = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      uiRef?.update(newState ?? null)
+      const eid = getStateId()
+      if (!eid) return false
+      const economy = registry.getComponent(eid, SCHEMA.ECONOMY)
+      const population = registry.getComponent(eid, SCHEMA.POPULATION)
+      if (!economy || !population) return false
+      if (population.soldiers >= population.maxSoldiers) return false
+      if (population.population <= population.soldiers + 1) return false
+      if (economy.gold < RECRUIT_GOLD_COST) return false
+      registry.addComponent(eid, SCHEMA.ECONOMY, { ...economy, gold: Math.round((economy.gold - RECRUIT_GOLD_COST) * 10) / 10 })
+      registry.addComponent(eid, SCHEMA.POPULATION, { ...population, soldiers: population.soldiers + 1 })
+      uiRef?.update(getState())
       return true
     },
     dismissSoldier(): boolean {
-      const gs = registry.getEntitiesWith([SCHEMA.GAME_STATE])
-      if (!gs.length) return false
-      const gsId = gs[0]!.id
-      const state = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      if (!state) return false
-      if (state.soldiers <= 0) return false
-      registry.addComponent(gsId, SCHEMA.GAME_STATE, { ...state, soldiers: state.soldiers - 1 })
-      const newState = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      uiRef?.update(newState ?? null)
+      const eid = getStateId()
+      if (!eid) return false
+      const population = registry.getComponent(eid, SCHEMA.POPULATION)
+      if (!population) return false
+      if (population.soldiers <= 0) return false
+      registry.addComponent(eid, SCHEMA.POPULATION, { ...population, soldiers: population.soldiers - 1 })
+      uiRef?.update(getState())
       return true
     },
     changeTaxRate(delta: number): void {
-      const gs = registry.getEntitiesWith([SCHEMA.GAME_STATE])
-      if (!gs.length) return
-      const gsId = gs[0]!.id
-      const state = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      if (!state) return
-      const newRate = Math.max(0, Math.min(50, state.taxRate + delta))
-      registry.addComponent(gsId, SCHEMA.GAME_STATE, { ...state, taxRate: newRate })
-      const newState = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      uiRef?.update(newState ?? null)
+      const eid = getStateId()
+      if (!eid) return
+      const economy = registry.getComponent(eid, SCHEMA.ECONOMY)
+      if (!economy) return
+      const newRate = Math.max(0, Math.min(50, economy.taxRate + delta))
+      registry.addComponent(eid, SCHEMA.ECONOMY, { ...economy, taxRate: newRate })
+      uiRef?.update(getState())
     },
     changeRations(level: number): void {
-      const gs = registry.getEntitiesWith([SCHEMA.GAME_STATE])
-      if (!gs.length) return
-      const gsId = gs[0]!.id
-      const state = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      if (!state) return
-      registry.addComponent(gsId, SCHEMA.GAME_STATE, { ...state, foodRations: Math.max(0, Math.min(2, level)) })
-      const newState = registry.getComponent(gsId, SCHEMA.GAME_STATE)
-      uiRef?.update(newState ?? null)
+      const eid = getStateId()
+      if (!eid) return
+      const economy = registry.getComponent(eid, SCHEMA.ECONOMY)
+      if (!economy) return
+      registry.addComponent(eid, SCHEMA.ECONOMY, { ...economy, foodRations: Math.max(0, Math.min(2, level)) })
+      uiRef?.update(getState())
     },
     getBuildingLevel(type: string): number {
       const buildings = registry.getEntitiesWith([SCHEMA.BUILDING])

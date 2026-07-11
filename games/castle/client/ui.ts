@@ -1,14 +1,13 @@
 import { Container, Graphics, Text } from 'pixi.js'
 import { MAP_W, MAP_H, PANEL_H, BUILDING_DEFS, RECRUIT_GOLD_COST } from '../game/config/castle.js'
-import type { BuildingDef } from '../game/config/castle.js'
-import type { CastleComponents } from '../game/contract.js'
+import type { CastleState } from './gameScene.js'
 
 const TAB_H = 36
 const CONTENT_Y = MAP_H + TAB_H
 const CONTENT_H = PANEL_H - TAB_H
 
 interface GameHandle {
-  getState(): CastleComponents['GameState'] | null
+  getState(): CastleState | null
   upgradeType(type: string): boolean
   recruitSoldier(): boolean
   dismissSoldier(): boolean
@@ -21,10 +20,10 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
   const c = new Container()
   container.addChild(c)
 
-  let currentState: CastleComponents['GameState'] | null = null
+  let currentState: CastleState | null = null
   let activeTab = 0
 
-  function update(state: CastleComponents['GameState'] | null): void {
+  function update(state: CastleState | null): void {
     currentState = state
     c.removeChildren()
     drawPanel()
@@ -93,10 +92,10 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
 
       if (!currentState) continue
 
-      const level = game.getBuildingLevel ? game.getBuildingLevel(def.type) : 1
+      const level = game.getBuildingLevel(def.type)
       const maxed = level >= 3
       const cost = def.upgradeCosts[level] ?? 0
-      const canAfford = currentState && currentState.gold >= cost
+      const canAfford = currentState.gold >= cost
 
       const bg = new Graphics()
       bg.rect(bx + 2, by + 2, cellW - 4, cellH - 4)
@@ -136,7 +135,7 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
         btn.rect(bx + cellW - 100, by + 14, 88, 32)
         btn.stroke({ color: canAfford ? 0x44AA44 : 0x555555, width: 1 })
         btn.eventMode = 'static'
-        btn.cursor = canAfford ? 'pointer' : 'default'
+        btn.cursor = 'pointer'
         c.addChild(btn)
 
         const btnText = new Text({
@@ -149,9 +148,8 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
         c.addChild(btnText)
 
         if (canAfford) {
-          const typeCopy = def.type
           btn.on('pointerdown', () => {
-            game.upgradeType(typeCopy)
+            game.upgradeType(def.type)
           })
         }
       }
