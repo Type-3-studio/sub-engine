@@ -9,8 +9,13 @@
   },
   "scripts": {
     "dev": "vite --host",
-    "dev:td": "vite src/tower-defense --host",
-    "dev:castle": "vite src/castle --host",
+    "dev:td": "vite games/tower-defense --host",
+    "dev:castle": "vite games/castle --host",
+    "dev:movement": "vite games/movement-demo --host",
+    "dev:combat": "vite games/combat-demo --host",
+    "dev:map": "vite games/map-demo --host",
+    "dev:input": "vite games/input-demo --host",
+    "dev:serial": "vite games/serialization-demo --host",
     "build": "vite build",
     "preview": "vite preview",
     "test": "node tests/testRegistry.js && node tests/testNavigation.js && node tests/simRunner.js"
