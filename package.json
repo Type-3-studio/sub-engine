@@ -9,6 +9,8 @@
   },
   "scripts": {
     "dev": "vite --host",
+    "dev:td": "vite src/tower-defense --host",
+    "dev:castle": "vite src/castle --host",
     "build": "vite build",
     "preview": "vite preview",
     "test": "node tests/testRegistry.js && node tests/testNavigation.js && node tests/simRunner.js"
