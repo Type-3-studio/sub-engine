@@ -61,21 +61,39 @@ sub-engine/
 ├── games/                  # Reference implementations (study these)
 │   ├── tower-defense/      #   Complete tower defense game
 │   │   ├── index.html
-│   │   └── src/
-│   │       ├── game/       #     ECS: contract, config, systems
-│   │       └── client/     #     PixiJS: main, scene, UI
+│   │   ├── game/           #     ECS: contract, config, systems
+│   │   └── client/         #     PixiJS: main, scene, UI
+│   ├── movement-demo/       #   Flow field navigation demo (~130 lines)
+│   │   ├── index.html
+│   │   ├── game/contract.js
+│   │   └── client/main.js
+│   ├── combat-demo/         #   Archers vs melee combat demo (~130 lines)
+│   │   ├── index.html
+│   │   ├── game/contract.js
+│   │   └── client/main.js
+│   ├── map-demo/            #   Interactive map + pathfinding demo (~100 lines)
+│   │   ├── index.html
+│   │   ├── game/contract.js
+│   │   └── client/main.js
+│   ├── input-demo/          #   Scaled container input handler demo (~120 lines)
+│   │   ├── index.html
+│   │   ├── game/contract.js
+│   │   └── client/main.js
+│   ├── serialization-demo/  #   Save/load registry state demo (~120 lines)
+│   │   ├── index.html
+│   │   ├── game/contract.js
+│   │   └── client/main.js
 │   └── castle/             #   Castle management game (WIP)
 │       ├── index.html
-│       └── src/
-│           ├── game/
-│           └── client/
+│       ├── game/
+│       └── client/
 ├── tests/
 │   ├── testRegistry.js     # Engine unit tests (46)
 │   ├── testNavigation.js   # Map/flow field tests (23)
 │   └── simRunner.js        # Headless flow-field simulation
-├── plan.md                 # Transformation plan
-├── state.md                # State tracking
-└── AGENTS.md               # This file — agent conventions
+├── ROADMAP.md              # Long-term plan + current status
+├── AGENTS.md               # This file — agent conventions
+└── vite.config.js          # Multi-entry Vite config
 ```
 
 ### Template usage
@@ -127,5 +145,10 @@ node tests/simRunner.js                 # Headless simulation
 npm run dev                             # Template (place holder)
 npm run dev:td                          # Tower defense reference game
 npm run dev:castle                      # Castle reference game
+npm run dev:movement                    # Movement demo (flow field nav)
+npm run dev:combat                      # Combat demo (archers vs melee)
+npm run dev:map                         # Map demo (click walls, pathfinding)
+npm run dev:input                       # Input demo (scaled container, drag)
+npm run dev:serial                      # Serialization demo (save/load)
 ```
 All test scripts exit with code 0 on pass, 1 on failure.
