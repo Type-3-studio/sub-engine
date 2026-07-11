@@ -2,9 +2,10 @@ import { SCHEMA } from '../contract.js'
 import type { Registry } from '../../../../src/engine/types.js'
 import type { TdComponents } from '../contract.js'
 
-export function enemySystem(registry: Registry<TdComponents>): Registry<TdComponents> {
+export function enemySystem(registry: Registry<TdComponents>, dt: number): Registry<TdComponents> {
   const enemies = registry.getEntitiesWith([SCHEMA.PATH_FOLLOWER, SCHEMA.POSITION])
   const toRemove: number[] = []
+  const stepScale = dt / 16
 
   for (const enemy of enemies) {
     const pf = enemy.PathFollower
@@ -24,7 +25,7 @@ export function enemySystem(registry: Registry<TdComponents>): Registry<TdCompon
     let newY = pos.y
     let newIndex = pf.waypointIndex
 
-    if (dist < pf.speed * 0.06) {
+    if (dist < pf.speed * stepScale) {
       newX = target.x
       newY = target.y
       newIndex = pf.waypointIndex + 1
@@ -45,8 +46,8 @@ export function enemySystem(registry: Registry<TdComponents>): Registry<TdCompon
         continue
       }
     } else {
-      newX = pos.x + (dx / dist) * pf.speed * 0.06
-      newY = pos.y + (dy / dist) * pf.speed * 0.06
+      newX = pos.x + (dx / dist) * pf.speed * stepScale
+      newY = pos.y + (dy / dist) * pf.speed * stepScale
     }
 
     registry.addComponent(enemy.id, SCHEMA.POSITION, { x: newX, y: newY })

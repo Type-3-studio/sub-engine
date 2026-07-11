@@ -269,8 +269,8 @@ export function createGameScene(container: Container, app: Application, gameW: n
     if (prev.phase === 'wave') {
       waveSystem(registry)
       towerSystem(registry)
-      projectileSystem(registry)
-      enemySystem(registry)
+      projectileSystem(registry, TICK_INTERVAL)
+      enemySystem(registry, TICK_INTERVAL)
     }
     const cur = registry.getComponent(st[0]!.id, SCHEMA.GAME_STATE)
     if (cur && (cur.phase !== prev.phase || cur.money !== prev.money || cur.lives !== prev.lives)) {

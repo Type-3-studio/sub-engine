@@ -2,9 +2,10 @@ import { SCHEMA } from '../contract.js'
 import type { Registry } from '../../../../src/engine/types.js'
 import type { TdComponents } from '../contract.js'
 
-export function projectileSystem(registry: Registry<TdComponents>): Registry<TdComponents> {
+export function projectileSystem(registry: Registry<TdComponents>, dt: number): Registry<TdComponents> {
   const projectiles = registry.getEntitiesWith([SCHEMA.PROJECTILE, SCHEMA.POSITION])
   const toRemove: number[] = []
+  const stepScale = dt / 16
 
   for (const proj of projectiles) {
     const p = proj.Projectile
@@ -25,7 +26,7 @@ export function projectileSystem(registry: Registry<TdComponents>): Registry<TdC
     const dy = targetPos.y - proj.Position.y
     const dist = Math.sqrt(dx * dx + dy * dy)
 
-    if (dist < p.speed * 0.06) {
+    if (dist < p.speed * stepScale) {
       const hp = registry.getComponent(targetId, SCHEMA.HEALTH)
       if (hp) {
         const newHp = Math.max(0, hp.current - p.damage)
@@ -54,8 +55,8 @@ export function projectileSystem(registry: Registry<TdComponents>): Registry<TdC
       toRemove.push(proj.id)
     } else {
       registry.addComponent(proj.id, SCHEMA.POSITION, {
-        x: proj.Position.x + (dx / dist) * p.speed * 0.06,
-        y: proj.Position.y + (dy / dist) * p.speed * 0.06,
+        x: proj.Position.x + (dx / dist) * p.speed * stepScale,
+        y: proj.Position.y + (dy / dist) * p.speed * stepScale,
       })
     }
   }
