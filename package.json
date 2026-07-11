@@ -16,6 +16,7 @@
     "dev:map": "vite games/map-demo --host",
     "dev:input": "vite games/input-demo --host",
     "dev:serial": "vite games/serialization-demo --host",
+    "dev:character": "vite games/character-demo --host",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
