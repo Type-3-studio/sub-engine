@@ -1,9 +1,9 @@
 import { Application, Graphics, Text } from 'pixi.js'
-import { createRegistry } from '../engine/index.js'
+import { createRegistry } from '@sub-engine/core'
 import { movementSystem } from '../game/systems/index.js'
 import { SCHEMA } from '../game/contract.js'
 import { TILE, COLS, ROWS, SPEED, MAP } from '../game/config/index.js'
-import { createResponsiveContainer, DebugOverlay } from '../common/index.js'
+import { createResponsiveContainer, DebugOverlay } from '@sub-engine/pixi'
 import type { GameComponents } from '../game/contract.js'
 
 export async function init(): Promise<void> {

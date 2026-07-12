@@ -1,11 +1,10 @@
 import { Graphics, Text, FederatedPointerEvent } from 'pixi.js'
-import { createRegistry, loadTiledMap, tiledMapToGameMap, computeFlowField } from '../../../src/engine/index.js'
-import { createResponsiveContainer, createTiledMapRenderer, createProceduralMap } from '../../../src/common/index.js'
-import { tileMapSystem } from '../game/systems/TileMapSystem.js'
+import { createRegistry, loadTiledMap, tiledMapToGameMap, computeFlowField } from '@sub-engine/core'
+import { createResponsiveContainer, createTiledMapRenderer, createProceduralMap } from '@sub-engine/pixi'
 import { SCHEMA } from '../game/contract.js'
 import { MAP_COLS, MAP_ROWS, TILE_SIZE, RENDER_SCALE, RENDER_TILE, GAME_WIDTH, GAME_HEIGHT, TILED_MAP_URL, GroundTile, TileGID } from '../game/config/tilemap.js'
 import type { TilemapComponents } from '../game/contract.js'
-import type { TiledTilesetRef } from '../../../src/engine/types.js'
+import type { TiledTilesetRef } from '@sub-engine/core'
 
 function buildEmptyGameMap(): ReturnType<typeof tiledMapToGameMap> {
   return tiledMapToGameMap({

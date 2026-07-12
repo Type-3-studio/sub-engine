@@ -1,0 +1,41 @@
+{
+  "name": "@sub-engine/pixi",
+  "version": "0.1.1",
+  "description": "PixiJS rendering bridge for Sub-Engine",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "@sub-engine/core": "*",
+    "pixi.js": "^8.19.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anomalyco/sub-engine.git"
+  },
+  "homepage": "https://github.com/anomalyco/sub-engine#readme",
+  "bugs": {
+    "url": "https://github.com/anomalyco/sub-engine/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "ecs",
+    "game-engine",
+    "pixi.js",
+    "2d",
+    "typescript"
+  ]
+}

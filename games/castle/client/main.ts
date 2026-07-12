@@ -1,5 +1,5 @@
 import { Application } from 'pixi.js'
-import { createResponsiveContainer } from '../../../src/common/responsive.js'
+import { createResponsiveContainer } from '@sub-engine/pixi'
 import { createGameScene } from './gameScene.js'
 import { createUI } from './ui.js'
 import { MAP_W, TOTAL_H } from '../game/config/castle.js'

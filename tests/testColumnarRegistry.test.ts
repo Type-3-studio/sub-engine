@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { createColumnarRegistry, schemaExists } from '../src/engine/index.js'
-import { createEntity } from '../src/common/createEntity.js'
+import { createColumnarRegistry, schemaExists } from '@sub-engine/core'
+import { createEntity } from '@sub-engine/core'
 
 describe('Schema Validation', () => {
   it('built-in schemas exist', () => {

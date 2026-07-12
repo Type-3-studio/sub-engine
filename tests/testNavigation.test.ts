@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { createMapFromMatrix } from '../src/engine/MapLoader.js'
-import { computeFlowField } from '../src/engine/FlowFieldNav.js'
+import { createMapFromMatrix } from '@sub-engine/core'
+import { computeFlowField } from '@sub-engine/core'
 
 function isNear(a: number, b: number, tol = 0.01): boolean {
   return Math.abs(a - b) < tol

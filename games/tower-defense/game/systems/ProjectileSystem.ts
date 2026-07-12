@@ -1,5 +1,5 @@
 import { SCHEMA } from '../contract.js'
-import type { Registry } from '../../../../src/engine/types.js'
+import type { Registry } from '@sub-engine/core'
 import type { TdComponents } from '../contract.js'
 
 export function projectileSystem(registry: Registry<TdComponents>, dt: number): Registry<TdComponents> {

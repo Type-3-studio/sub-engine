@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseTiledMap, tiledMapToGameMap } from '../src/engine/TiledMapLoader.js'
+import { parseTiledMap, tiledMapToGameMap } from '@sub-engine/core'
 
 const MINIMAL_TMJ = JSON.stringify({
   width: 10,

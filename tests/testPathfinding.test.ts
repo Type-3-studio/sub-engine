@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { createMapFromMatrix, aStar, createRegistry } from '../src/engine/index.js'
-import { pathfindingSystem } from '../src/common/systems/PathfindingSystem.js'
-import { movementSystem } from '../src/common/systems/MovementSystem.js'
+import { createMapFromMatrix, aStar, createRegistry } from '@sub-engine/core'
+import { pathfindingSystem } from '@sub-engine/core'
+import { movementSystem } from '@sub-engine/core'
 
 describe('A* Pathfinding', () => {
   const openMap = createMapFromMatrix([
@@ -101,8 +101,8 @@ describe('PathfindingSystem', () => {
     })
 
     for (let i = 0; i < 10; i++) {
-      pathfindingSystem(registry)
-      movementSystem(registry)
+      pathfindingSystem(registry, 16)
+      movementSystem(registry, 16)
     }
 
     const pos = registry.getComponent(e, 'Position') as any
@@ -122,8 +122,8 @@ describe('PathfindingSystem', () => {
     })
 
     for (let i = 0; i < 20; i++) {
-      pathfindingSystem(registry)
-      movementSystem(registry)
+      pathfindingSystem(registry, 16)
+      movementSystem(registry, 16)
     }
 
     const vel = registry.getComponent(e, 'Velocity') as any
@@ -147,8 +147,8 @@ describe('PathfindingSystem', () => {
     })
 
     for (let i = 0; i < 30; i++) {
-      pathfindingSystem(registry)
-      movementSystem(registry)
+      pathfindingSystem(registry, 16)
+      movementSystem(registry, 16)
     }
 
     const pf = registry.getComponent(e, 'PathFollower') as any

@@ -1,7 +1,6 @@
 import { Application, Graphics, Text } from 'pixi.js'
-import { createRegistry } from '../../../src/engine/index.js'
-import { combatSystem } from '../../../src/common/index.js'
-import { createResponsiveContainer } from '../../../src/common/responsive.js'
+import { createRegistry, combatSystem } from '@sub-engine/core'
+import { createResponsiveContainer } from '@sub-engine/pixi'
 import { SCHEMA } from '../game/contract.js'
 import type { CombatComponents } from '../game/contract.js'
 
@@ -134,7 +133,7 @@ export async function init(): Promise<void> {
   app.ticker.add(() => {
     moveMelee()
     assignTargets()
-    combatSystem(registry)
+    combatSystem(registry, 16)
     removeDead()
     render()
   })

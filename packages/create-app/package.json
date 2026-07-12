@@ -1,0 +1,20 @@
+{
+  "name": "create-sub-engine",
+  "version": "0.1.1",
+  "description": "Scaffold a new Sub-Engine game project",
+  "type": "module",
+  "bin": {
+    "create-sub-engine": "src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anomalyco/sub-engine.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "ecs",
+    "game-engine",
+    "scaffold",
+    "cli"
+  ]
+}

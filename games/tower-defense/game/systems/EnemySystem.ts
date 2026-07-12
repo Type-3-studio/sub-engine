@@ -1,5 +1,5 @@
 import { SCHEMA } from '../contract.js'
-import type { Registry } from '../../../../src/engine/types.js'
+import type { Registry } from '@sub-engine/core'
 import type { TdComponents } from '../contract.js'
 
 export function enemySystem(registry: Registry<TdComponents>, dt: number): Registry<TdComponents> {
@@ -8,7 +8,7 @@ export function enemySystem(registry: Registry<TdComponents>, dt: number): Regis
   const stepScale = dt / 16
 
   for (const enemy of enemies) {
-    const pf = enemy.PathFollower
+    const pf = enemy.TdPathFollower
     const waypoints = pf.waypoints
     const target = waypoints[pf.waypointIndex]
     if (!target) {
@@ -51,7 +51,7 @@ export function enemySystem(registry: Registry<TdComponents>, dt: number): Regis
     }
 
     registry.addComponent(enemy.id, SCHEMA.POSITION, { x: newX, y: newY })
-    registry.addComponent(enemy.id, SCHEMA.PATH_FOLLOWER, {
+    registry.addComponent(enemy.id, 'TdPathFollower', {
       waypoints,
       waypointIndex: newIndex,
       speed: pf.speed,

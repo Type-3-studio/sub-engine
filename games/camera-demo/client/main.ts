@@ -1,8 +1,6 @@
 import { Application, Graphics, Text, Container, Point, FederatedPointerEvent } from 'pixi.js'
-import { createRegistry } from '../../../src/engine/index.js'
-import { createResponsiveContainer } from '../../../src/common/responsive.js'
-import { createEntity } from '../../../src/common/createEntity.js'
-import { movementSystem, cameraSystem, collisionSystem, zOrderSystem } from '../../../src/common/index.js'
+import { createRegistry, createEntity, movementSystem, cameraSystem, collisionSystem, zOrderSystem } from '@sub-engine/core'
+import { createResponsiveContainer } from '@sub-engine/pixi'
 import { SCHEMA } from '../game/contract.js'
 import type { CameraDemoComponents } from '../game/contract.js'
 
@@ -165,16 +163,16 @@ export async function init(): Promise<void> {
   window.addEventListener('keydown', (e: KeyboardEvent) => {
     keys[e.key] = true
     if (e.key === 'z' || e.key === 'Z') {
-      const cam = registry.getComponent(camEntity, 'Camera') as CameraDemoComponents['Camera']
-      if (cam) registry.addComponent(camEntity, 'Camera', { ...cam, zoom: Math.min(cam.zoom * 1.2, 3) })
+      const cam = registry.getComponent(camEntity, SCHEMA.CAMERA) as CameraDemoComponents['Camera']
+      if (cam) registry.addComponent(camEntity, SCHEMA.CAMERA, { ...cam, zoom: Math.min(cam.zoom * 1.2, 3) })
     }
     if (e.key === 'x' || e.key === 'X') {
-      const cam = registry.getComponent(camEntity, 'Camera') as CameraDemoComponents['Camera']
-      if (cam) registry.addComponent(camEntity, 'Camera', { ...cam, zoom: Math.max(cam.zoom / 1.2, 0.3) })
+      const cam = registry.getComponent(camEntity, SCHEMA.CAMERA) as CameraDemoComponents['Camera']
+      if (cam) registry.addComponent(camEntity, SCHEMA.CAMERA, { ...cam, zoom: Math.max(cam.zoom / 1.2, 0.3) })
     }
     if (e.key === 'r' || e.key === 'R') {
-      const cam = registry.getComponent(camEntity, 'Camera') as CameraDemoComponents['Camera']
-      if (cam) registry.addComponent(camEntity, 'Camera', { ...cam, zoom: 1 })
+      const cam = registry.getComponent(camEntity, SCHEMA.CAMERA) as CameraDemoComponents['Camera']
+      if (cam) registry.addComponent(camEntity, SCHEMA.CAMERA, { ...cam, zoom: 1 })
     }
   })
   window.addEventListener('keyup', (e: KeyboardEvent) => { keys[e.key] = false })
@@ -188,24 +186,24 @@ export async function init(): Promise<void> {
 
     if (dx !== 0 || dy !== 0) {
       const len = Math.sqrt(dx * dx + dy * dy)
-      registry.addComponent(player, 'Velocity', {
+      registry.addComponent(player, SCHEMA.VELOCITY, {
         x: (dx / len) * PLAYER_SPEED,
         y: (dy / len) * PLAYER_SPEED,
       })
     } else {
-      registry.addComponent(player, 'Velocity', { x: 0, y: 0 })
+      registry.addComponent(player, SCHEMA.VELOCITY, { x: 0, y: 0 })
     }
   }
 
   function applyCamera(): void {
-    const cam = registry.getComponent(camEntity, 'Camera') as CameraDemoComponents['Camera'] | undefined
+    const cam = registry.getComponent(camEntity, SCHEMA.CAMERA) as CameraDemoComponents['Camera'] | undefined
     if (!cam) return
     cameraContainer.x = -cam.x * cam.zoom
     cameraContainer.y = -cam.y * cam.zoom
     cameraContainer.scale.set(cam.zoom)
 
     infoText.text =
-      `Pos: ${Math.round((registry.getComponent(player, 'Position') as any)?.x ?? 0)},${Math.round((registry.getComponent(player, 'Position') as any)?.y ?? 0)}` +
+      `Pos: ${Math.round((registry.getComponent(player, SCHEMA.POSITION) as any)?.x ?? 0)},${Math.round((registry.getComponent(player, SCHEMA.POSITION) as any)?.y ?? 0)}` +
       `  Zoom: ${cam.zoom.toFixed(2)}x` +
       `  Cam: ${Math.round(cam.x)},${Math.round(cam.y)}` +
       `  Entities: ${registry.entityCount()}`
@@ -213,10 +211,10 @@ export async function init(): Promise<void> {
 
   function loop(): void {
     update()
-    movementSystem(registry)
-    collisionSystem(registry)
-    cameraSystem(registry)
-    zOrderSystem(registry)
+    movementSystem(registry, 16)
+    collisionSystem(registry, 16)
+    cameraSystem(registry, 16)
+    zOrderSystem(registry, 16)
     syncVisuals()
     applyCamera()
     requestAnimationFrame(loop)

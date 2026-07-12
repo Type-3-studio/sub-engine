@@ -1,6 +1,6 @@
 import { Application, Graphics, Text } from 'pixi.js'
-import { createRegistry } from '../../../src/engine/index.js'
-import { createResponsiveContainer } from '../../../src/common/responsive.js'
+import { createRegistry } from '@sub-engine/core'
+import { createResponsiveContainer } from '@sub-engine/pixi'
 import { SCHEMA } from '../game/contract.js'
 import type { SerialComponents } from '../game/contract.js'
 

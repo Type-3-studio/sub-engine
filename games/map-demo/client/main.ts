@@ -1,6 +1,6 @@
 import { Application, Graphics, Text, FederatedPointerEvent } from 'pixi.js'
-import { createMapFromMatrix, computeFlowField } from '../../../src/engine/index.js'
-import { createResponsiveContainer } from '../../../src/common/responsive.js'
+import { createMapFromMatrix, computeFlowField } from '@sub-engine/core'
+import { createResponsiveContainer } from '@sub-engine/pixi'
 
 const TILE = 48
 const COLS = 12

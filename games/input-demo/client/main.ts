@@ -1,5 +1,5 @@
 import { Application, Graphics, Text, FederatedPointerEvent } from 'pixi.js'
-import { createResponsiveContainer } from '../../../src/common/responsive.js'
+import { createResponsiveContainer } from '@sub-engine/pixi'
 
 const W = 640
 const H = 480

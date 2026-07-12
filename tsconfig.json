@@ -13,11 +13,12 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "declaration": true,
-    "declarationDir": "./dist/types",
-    "emitDeclarationOnly": false,
-    "outDir": "./dist/out"
+    "baseUrl": ".",
+    "paths": {
+      "@sub-engine/core": ["./packages/core/src/index.ts"],
+      "@sub-engine/pixi": ["./packages/pixi/src/index.ts"]
+    }
   },
-  "include": ["src/**/*.ts", "games/**/*.ts", "tests/**/*.ts"],
+  "include": ["src/**/*.ts", "games/**/*.ts", "tests/**/*.ts", "packages/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,5 +1,5 @@
 import { SCHEMA } from '../contract.js'
-import type { Registry } from '../../../../src/engine/types.js'
+import type { Registry } from '@sub-engine/core'
 import type { CastleComponents } from '../contract.js'
 import { BUILDING_DEFS, FOOD_CONSUMPTION_RATES, HAPPINESS_RATION_BONUSES } from '../config/castle.js'
 import type { BuildingDef } from '../config/castle.js'

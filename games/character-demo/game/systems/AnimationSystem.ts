@@ -1,5 +1,5 @@
 import { SCHEMA } from '../contract.js'
-import type { Registry } from '../../../../src/engine/types.js'
+import type { Registry } from '@sub-engine/core'
 import type { CharacterComponents } from '../contract.js'
 
 export type AnimType = 'idle' | 'idle_blinking' | 'run' | 'walk' | 'attack' | 'hurt' | 'dying'

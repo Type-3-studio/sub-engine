@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { createRegistry, schemaExists } from '../src/engine/index.js'
-import { particleSystem } from '../src/common/systems/ParticleSystem.js'
+import { createRegistry, schemaExists } from '@sub-engine/core'
+import { particleSystem } from '@sub-engine/core'
 
 describe('Particle Schemas', () => {
   it('ParticleEmitter schema is registered', () => {

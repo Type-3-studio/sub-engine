@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { createRegistry, registerSchema } from '../src/engine/index.js'
-import { createMapFromMatrix } from '../src/engine/MapLoader.js'
-import { computeFlowField } from '../src/engine/FlowFieldNav.js'
-import { movementSystem, combatSystem } from '../src/common/index.js'
+import { createRegistry, registerSchema } from '@sub-engine/core'
+import { createMapFromMatrix } from '@sub-engine/core'
+import { computeFlowField } from '@sub-engine/core'
+import { movementSystem, combatSystem } from '@sub-engine/core'
 
 const POS = 'Position'
 const VEL = 'Velocity'
@@ -68,8 +68,8 @@ describe('Headless Simulation (Flow Field Navigation)', () => {
     let finished = false
     for (let tick = 1; tick <= TICK_LIMIT && !finished; tick++) {
       navigateWithFlowField(registry, flowField, automaton, SPEED)
-      movementSystem(registry)
-      combatSystem(registry)
+      movementSystem(registry, 16)
+      combatSystem(registry, 16)
 
       const pos = registry.getComponent(automaton, POS)!
       expect(pos.x).toBeGreaterThanOrEqual(0)

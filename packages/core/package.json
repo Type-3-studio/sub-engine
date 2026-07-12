@@ -1,0 +1,36 @@
+{
+  "name": "@sub-engine/core",
+  "version": "0.1.1",
+  "description": "AI-first, pure-data ECS 2D game engine",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anomalyco/sub-engine.git"
+  },
+  "homepage": "https://github.com/anomalyco/sub-engine#readme",
+  "bugs": {
+    "url": "https://github.com/anomalyco/sub-engine/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "ecs",
+    "game-engine",
+    "typescript",
+    "ai-first"
+  ]
+}

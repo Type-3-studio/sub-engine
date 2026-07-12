@@ -1,4 +1,4 @@
-import { registerSchema } from '../../../src/engine/index.js'
+import { registerSchema } from '@sub-engine/core'
 
 export const SCHEMA = {
   POSITION: 'Position',

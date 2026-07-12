@@ -1,8 +1,7 @@
 import { Application, Graphics, Text, Container, AnimatedSprite } from 'pixi.js'
-import { createRegistry } from '../../../src/engine/index.js'
-import { movementSystem } from '../../../src/common/index.js'
-import { createResponsiveContainer } from '../../../src/common/responsive.js'
-import { createAnimManager } from '../../../src/common/spriteLoader.js'
+import { createRegistry, movementSystem } from '@sub-engine/core'
+import { createResponsiveContainer } from '@sub-engine/pixi'
+import { createAnimManager } from '@sub-engine/pixi'
 import { animationSystem } from '../game/systems/AnimationSystem.js'
 import { SCHEMA } from '../game/contract.js'
 import { ANIM_SEQUENCES, TILE_SIZE, MOVE_SPEED, getAnimName } from '../game/config/character.js'
@@ -181,7 +180,7 @@ export async function init(): Promise<void> {
   function gameLoop(): void {
     updateInput()
     animationSystem(registry)
-    movementSystem(registry)
+    movementSystem(registry, 16)
     syncSprite()
     render()
     requestAnimationFrame(gameLoop)

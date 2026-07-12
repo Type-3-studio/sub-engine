@@ -1,11 +1,11 @@
-import { registerSchema } from '../../../src/engine/index.js'
+import { registerSchema } from '@sub-engine/core'
 
 export const SCHEMA = {
   POSITION: 'Position',
   VELOCITY: 'Velocity',
   HEALTH: 'Health',
   TARGET_SCANNER: 'TargetScanner',
-  PATH_FOLLOWER: 'PathFollower',
+  PATH_FOLLOWER: 'TdPathFollower',
   TOWER: 'Tower',
   PROJECTILE: 'Projectile',
   GAME_STATE: 'GameState',
@@ -19,7 +19,7 @@ export interface TdComponents {
   'Velocity': { x: number; y: number }
   'Health': { current: number; max: number }
   'TargetScanner': { range: number; targetEntity?: number }
-  'PathFollower': { waypoints: Array<{ x: number; y: number }>; waypointIndex: number; speed: number }
+  'TdPathFollower': { waypoints: Array<{ x: number; y: number }>; waypointIndex: number; speed: number }
   'Tower': { range: number; damage: number; fireRate: number; cooldown: number; towerType: string; projectileSpeed?: number; cost: number }
   'Projectile': { targetEntity: number; speed: number; damage: number }
   'GameState': { money: number; lives: number; wave: number; phase: string }
@@ -28,7 +28,7 @@ export interface TdComponents {
   'Label': { value: string }
 }
 
-registerSchema(SCHEMA.PATH_FOLLOWER, {
+registerSchema('TdPathFollower', {
   waypoints: { type: 'array', required: true },
   waypointIndex: { type: 'number', required: true },
   speed: { type: 'number', required: true },

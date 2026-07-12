@@ -4,8 +4,10 @@
   "description": "AI-first, pure-data ECS 2D engine",
   "type": "module",
   "private": true,
+  "workspaces": ["packages/*"],
   "dependencies": {
-    "pixi.js": "^8.19.0"
+    "@sub-engine/core": "*",
+    "@sub-engine/pixi": "*"
   },
   "scripts": {
     "dev": "vite --host",
@@ -20,14 +22,13 @@
     "dev:camera": "vite games/camera-demo --host",
     "dev:tilemap": "vite games/tilemap-demo --host",
     "build": "vite build",
+    "build:pkgs": "npm run build -w packages/core && npm run build -w packages/pixi",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "bench": "tsx tests/benchmarks/index.ts"
+    "test": "vitest run"
   },
   "devDependencies": {
+    "pixi.js": "^8.19.0",
     "@types/node": "^26.1.1",
     "@vitest/coverage-v8": "^4.1.10",
     "tsx": "^4.19.0",

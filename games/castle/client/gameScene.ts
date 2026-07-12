@@ -1,8 +1,8 @@
 import { Container, Graphics, Text, Application } from 'pixi.js'
-import { createRegistry } from '../../../src/engine/index.js'
+import { createRegistry } from '@sub-engine/core'
 import { SCHEMA } from '../game/contract.js'
 import type { CastleComponents } from '../game/contract.js'
-import type { Registry } from '../../../src/engine/types.js'
+import type { Registry } from '@sub-engine/core'
 import { castleSystem } from '../game/systems/CastleSystem.js'
 import {
   BUILDING_DEFS, BUILDING_LAYOUT, MAP_W, MAP_H, DAY_LENGTH,

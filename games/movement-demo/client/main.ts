@@ -1,7 +1,6 @@
 import { Application, Graphics, Text } from 'pixi.js'
-import { createRegistry, createMapFromMatrix, computeFlowField } from '../../../src/engine/index.js'
-import { movementSystem } from '../../../src/common/index.js'
-import { createResponsiveContainer } from '../../../src/common/responsive.js'
+import { createRegistry, createMapFromMatrix, computeFlowField, movementSystem } from '@sub-engine/core'
+import { createResponsiveContainer } from '@sub-engine/pixi'
 import { SCHEMA } from '../game/contract.js'
 import type { MovementComponents } from '../game/contract.js'
 
@@ -143,7 +142,7 @@ export async function init(): Promise<void> {
     if (!pos) return
     const v = flowField.getVector(Math.round(pos.x), Math.round(pos.y))
     registry.addComponent(player, SCHEMA.VELOCITY, { x: v.x * SPEED * 0.05, y: v.y * SPEED * 0.05 })
-    movementSystem(registry)
+    movementSystem(registry, 16)
     drawPlayer()
   }
 

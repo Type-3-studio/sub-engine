@@ -1,5 +1,5 @@
 import { SCHEMA } from '../contract.js'
-import type { Registry } from '../../../../src/engine/types.js'
+import type { Registry } from '@sub-engine/core'
 import type { TdComponents } from '../contract.js'
 
 export function waveSystem(registry: Registry<TdComponents>): Registry<TdComponents> {
@@ -26,7 +26,7 @@ export function waveSystem(registry: Registry<TdComponents>): Registry<TdCompone
       const enemy = registry.createEntity()
       const waypoints = wc.waypoints.map(w => ({ x: w.x, y: w.y }))
       registry.addComponent(enemy, SCHEMA.POSITION, { x: waypoints[0]!.x, y: waypoints[0]!.y })
-      registry.addComponent(enemy, SCHEMA.PATH_FOLLOWER, {
+      registry.addComponent(enemy, 'TdPathFollower', {
         waypoints,
         waypointIndex: 1,
         speed: wc.enemySpeed,

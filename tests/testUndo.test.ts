@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { createRegistry } from '../src/engine/index.js'
-import { UndoStack } from '../src/common/UndoStack.js'
+import { createRegistry } from '@sub-engine/core'
+import { UndoStack } from '@sub-engine/core'
 
 describe('UndoStack', () => {
   it('canUndo returns false initially', () => {

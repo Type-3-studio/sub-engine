@@ -1,4 +1,4 @@
-import type { PngSequenceDef } from '../../../../src/common/spriteLoader.js'
+import type { PngSequenceDef } from '@sub-engine/pixi'
 
 export const TILE_SIZE = 64
 export const MOVE_SPEED = 3

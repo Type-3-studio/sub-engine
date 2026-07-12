@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { createRegistry, schemaExists } from '../src/engine/index.js'
-import { audioSystem, getAudioManager, initAudioSystem } from '../src/common/systems/AudioSystem.js'
+import { createRegistry, schemaExists } from '@sub-engine/core'
+import { audioSystem, getAudioManager, initAudioSystem } from '@sub-engine/core'
 
 describe('AudioSource Schema', () => {
   it('AudioSource schema is registered', () => {

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { createRegistry, SCHEMAS } from '../src/engine/index.js'
-import { cameraSystem } from '../src/common/systems/CameraSystem.js'
-import { collisionSystem } from '../src/common/systems/CollisionSystem.js'
-import { zOrderSystem } from '../src/common/systems/ZOrderSystem.js'
-import { SpatialGrid } from '../src/common/SpatialGrid.js'
+import { createRegistry, SCHEMAS } from '@sub-engine/core'
+import { cameraSystem } from '@sub-engine/core'
+import { collisionSystem } from '@sub-engine/core'
+import { zOrderSystem } from '@sub-engine/core'
+import { SpatialGrid } from '@sub-engine/core'
 
 describe('Phase 3 Schema Registration', () => {
   it('Camera schema is registered', () => {
@@ -35,7 +35,7 @@ describe('Camera System', () => {
       maxX: 1600, maxY: 1200,
     })
 
-    cameraSystem(creg)
+    cameraSystem(creg, 16)
     let cam = creg.getComponent(camId, 'Camera') as any
     expect(cam.x).toBe(0)
     expect(cam.y).toBe(0)
@@ -57,7 +57,7 @@ describe('Camera System', () => {
     })
 
     creg.addComponent(target, 'Position', { x: 1200, y: 900 })
-    cameraSystem(creg)
+    cameraSystem(creg, 16)
     const cam = creg.getComponent(camId, 'Camera') as any
     expect(cam.x).toBe(800)
     expect(cam.y).toBe(600)
@@ -79,13 +79,13 @@ describe('Camera System', () => {
     })
 
     creg.addComponent(target, 'Position', { x: 0, y: 0 })
-    cameraSystem(creg)
+    cameraSystem(creg, 16)
     let cam = creg.getComponent(camId, 'Camera') as any
     expect(cam.x).toBe(0)
     expect(cam.y).toBe(0)
 
     creg.addComponent(target, 'Position', { x: 2000, y: 1500 })
-    cameraSystem(creg)
+    cameraSystem(creg, 16)
     cam = creg.getComponent(camId, 'Camera') as any
     expect(cam.x).toBe(800)
     expect(cam.y).toBe(600)
@@ -99,7 +99,7 @@ describe('Camera System', () => {
       width: 800, height: 600,
       zoom: 1,
     })
-    cameraSystem(creg)
+    cameraSystem(creg, 16)
     const cam = creg.getComponent(staticCam, 'Camera') as any
     expect(cam.x).toBe(100)
     expect(cam.y).toBe(200)
@@ -117,7 +117,7 @@ describe('Collision System', () => {
     colReg.addComponent(b, 'Position', { x: 120, y: 100 })
     colReg.addComponent(b, 'Collider', { width: 50, height: 50, solid: true })
 
-    collisionSystem(colReg)
+    collisionSystem(colReg, 16)
     const pa = colReg.getComponent(a, 'Position') as any
     const pb = colReg.getComponent(b, 'Position') as any
     expect(pa.x === 100 && pb.x === 120).toBe(false)
@@ -132,7 +132,7 @@ describe('Collision System', () => {
     colReg.addComponent(b, 'Position', { x: 100, y: 100 })
     colReg.addComponent(b, 'Collider', { width: 10, height: 10, solid: true })
 
-    collisionSystem(colReg)
+    collisionSystem(colReg, 16)
     const pa = colReg.getComponent(a, 'Position') as any
     const pb = colReg.getComponent(b, 'Position') as any
     expect(pa.x).toBe(0)
@@ -148,7 +148,7 @@ describe('Collision System', () => {
     colReg.addComponent(b, 'Position', { x: 120, y: 100 })
     colReg.addComponent(b, 'Collider', { width: 50, height: 50, solid: false })
 
-    collisionSystem(colReg)
+    collisionSystem(colReg, 16)
     const pb = colReg.getComponent(b, 'Position') as any
     expect(pb.x).not.toBe(120)
   })
@@ -199,7 +199,7 @@ describe('ZOrder System', () => {
     const z3 = zreg.createEntity()
     zreg.addComponent(z3, 'ZOrder', { layer: -1, order: 5 })
 
-    expect(() => zOrderSystem(zreg)).not.toThrow()
+    expect(() => zOrderSystem(zreg, 16)).not.toThrow()
 
     const z1data = zreg.getComponent(z1, 'ZOrder') as any
     expect(z1data.layer).toBe(0)

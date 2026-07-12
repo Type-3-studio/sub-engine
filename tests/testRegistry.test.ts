@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { createRegistry, registerSchema, validateAllSchemas, schemaExists, SCHEMAS } from '../src/engine/index.js'
-import { createEntity } from '../src/common/createEntity.js'
-import { createGameLoop } from '../src/common/GameLoop.js'
+import { createRegistry, registerSchema, validateAllSchemas, schemaExists, SCHEMAS } from '@sub-engine/core'
+import { createEntity } from '@sub-engine/core'
+import { createGameLoop } from '@sub-engine/core'
 
 describe('Schema Validation', () => {
   it('built-in schemas are registered', () => {
