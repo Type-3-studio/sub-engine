@@ -27,6 +27,7 @@
     "dev:swarm": "vite games/scrap-swarm --host",
     "dev:ra": "vite games/red-alert-clone --host",
     "dev:pacman": "vite games/pacman --host",
+    "dev:bomber": "vite games/sub-bomber --host",
     "build": "vite build",
     "build:pkgs": "npm run build -w packages/core && npm run build -w packages/pixi",
     "preview": "vite preview",
