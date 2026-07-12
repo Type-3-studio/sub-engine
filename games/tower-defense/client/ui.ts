@@ -1,4 +1,4 @@
-import { Container, Graphics, Text } from 'pixi.js'
+import { Container, Graphics, Text, FederatedPointerEvent } from 'pixi.js'
 import { TOWERS, TILE_SIZE, MAP_COLS, MAP_ROWS } from '../game/config/towerDefense.js'
 import type { TdComponents } from '../game/contract.js'
 
@@ -71,9 +71,11 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
     bt.x = APP_W - 105; bt.y = 15
     c.addChild(bt)
 
-    if (isBuilding && !isComplete) {
-      btn.on('pointerdown', () => game.startWave())
-    }
+    btn.on('pointerdown', (e: FederatedPointerEvent) => {
+      e.stopPropagation()
+      if (!isBuilding || isComplete) return
+      game.startWave()
+    })
   }
 
   function drawMenu(): void {
@@ -125,7 +127,8 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
       ds.x = bx + 36; ds.y = by + 42
       c.addChild(ds)
 
-      btn.on('pointerdown', () => {
+      btn.on('pointerdown', (e: FederatedPointerEvent) => {
+        e.stopPropagation()
         if (!canAfford) return
         if (isSel) {
           selectedId = null

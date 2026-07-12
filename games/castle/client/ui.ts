@@ -1,4 +1,4 @@
-import { Container, Graphics, Text } from 'pixi.js'
+import { Container, Graphics, Text, FederatedPointerEvent } from 'pixi.js'
 import { MAP_W, MAP_H, PANEL_H, BUILDING_DEFS, RECRUIT_GOLD_COST } from '../game/config/castle.js'
 import type { CastleState } from './gameScene.js'
 
@@ -70,7 +70,8 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
       btn.eventMode = 'static'
       btn.cursor = 'pointer'
       const idx = i
-      btn.on('pointerdown', () => {
+      btn.on('pointerdown', (e: FederatedPointerEvent) => {
+        e.stopPropagation()
         activeTab = idx
         update(currentState)
       })
@@ -147,11 +148,11 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
         btnText.y = by + 30
         c.addChild(btnText)
 
-        if (canAfford) {
-          btn.on('pointerdown', () => {
-            game.upgradeType(def.type)
-          })
-        }
+        btn.on('pointerdown', (e: FederatedPointerEvent) => {
+          e.stopPropagation()
+          if (!canAfford) return
+          game.upgradeType(def.type)
+        })
       }
     }
   }
@@ -242,7 +243,10 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
       rTxt.y = ry + 12
       c.addChild(rTxt)
       const idx = i
-      rBtn.on('pointerdown', () => game.changeRations(idx))
+      rBtn.on('pointerdown', (e: FederatedPointerEvent) => {
+        e.stopPropagation()
+        game.changeRations(idx)
+      })
     }
   }
 
@@ -316,10 +320,13 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
     btn.addChild(t)
     btn.x = x
     btn.y = y
+    bg.eventMode = 'static'
     if (enabled) {
-      bg.eventMode = 'static'
       bg.cursor = 'pointer'
-      bg.on('pointerdown', onClick)
+      bg.on('pointerdown', (e: FederatedPointerEvent) => {
+        e.stopPropagation()
+        onClick()
+      })
     }
     return btn
   }
@@ -342,7 +349,10 @@ export function createUI(container: Container, game: GameHandle, gameW: number, 
     btn.addChild(t)
     bg.eventMode = 'static'
     bg.cursor = 'pointer'
-    bg.on('pointerdown', callback)
+    bg.on('pointerdown', (e: FederatedPointerEvent) => {
+      e.stopPropagation()
+      callback()
+    })
     btn.x = x
     btn.y = y
     return btn
