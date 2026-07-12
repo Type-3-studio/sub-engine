@@ -1,7 +1,6 @@
 import { Application, Graphics, Text } from 'pixi.js'
-import { createRegistry } from '@sub-engine/core'
+import { createRegistry, createGameLoop, movementSystem } from '@sub-engine/core'
 import { createResponsiveContainer, DebugOverlay } from '@sub-engine/pixi'
-import { movementSystem } from '../game/systems/index.js'
 import { SCHEMA } from '../game/contract.js'
 import { TILE, COLS, ROWS, MAP } from '../game/config/index.js'
 import type { GameComponents } from '../game/contract.js'
@@ -34,7 +33,7 @@ export async function init(): Promise<void> {
   })
   container.addChild(text)
 
-  const overlay = new DebugOverlay(app, () => registry.getAllEntities() as any[])
+  const overlay = new DebugOverlay(app, () => registry.getAllEntitiesCopy() as any[])
 
   function isWalkable(x: number, y: number): boolean {
     if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false
@@ -65,22 +64,40 @@ export async function init(): Promise<void> {
 
   draw()
 
+  const keys: Record<string, boolean> = {}
+
   window.addEventListener('keydown', (e: KeyboardEvent) => {
-    let dx = 0, dy = 0
-    if (e.key === 'ArrowUp') dy = -1
-    else if (e.key === 'ArrowDown') dy = 1
-    else if (e.key === 'ArrowLeft') dx = -1
-    else if (e.key === 'ArrowRight') dx = 1
-    else return
-    e.preventDefault()
-    const pos = registry.getComponent(player, SCHEMA.POSITION)
-    if (!pos) return
-    const nx = pos.x + dx
-    const ny = pos.y + dy
-    if (!isWalkable(nx, ny)) return
-    registry.addComponent(player, SCHEMA.POSITION, { x: nx, y: ny })
-    draw()
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault()
+      keys[e.key] = true
+    }
   })
+
+  window.addEventListener('keyup', (e: KeyboardEvent) => {
+    keys[e.key] = false
+  })
+
+  const gameLoop = createGameLoop({
+    tickRate: 10,
+    maxFrameMs: 100,
+    onStep: () => {
+      let dx = 0, dy = 0
+      if (keys['ArrowUp']) dy = -1
+      else if (keys['ArrowDown']) dy = 1
+      else if (keys['ArrowLeft']) dx = -1
+      else if (keys['ArrowRight']) dx = 1
+      if (dx === 0 && dy === 0) return
+      const pos = registry.getComponent(player, SCHEMA.POSITION)
+      if (!pos) return
+      const nx = pos.x + dx
+      const ny = pos.y + dy
+      if (!isWalkable(nx, ny)) return
+      registry.addComponent(player, SCHEMA.POSITION, { x: nx, y: ny })
+      draw()
+    },
+    onFrame: () => {},
+  })
+  gameLoop.start()
 
   app.ticker.add(() => overlay.update())
 }

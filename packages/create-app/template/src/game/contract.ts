@@ -12,6 +12,3 @@ export interface GameComponents {
   'Label': { value: string }
 }
 
-registerSchema('Label', {
-  value: { type: 'string', required: true },
-})
