@@ -5,10 +5,43 @@ import type { TdComponents } from '../contract.js'
 export function towerSystem(registry: Registry<TdComponents>): Registry<TdComponents> {
   const towers = registry.getEntitiesWith([SCHEMA.TOWER, SCHEMA.POSITION])
   const enemies = registry.getEntitiesWith([SCHEMA.ENEMY, SCHEMA.POSITION])
+  const toRemove: number[] = []
 
   for (const tower of towers) {
     const t = tower.Tower
     const now = performance.now()
+
+    let meleeDamage = 0
+    for (const enemy of enemies) {
+      const dx = enemy.Position.x - tower.Position.x
+      const dy = enemy.Position.y - tower.Position.y
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      if (dist < 1.0) {
+        meleeDamage += 1
+      }
+    }
+
+    if (meleeDamage > 0) {
+      const newHp = Math.max(0, t.hp - meleeDamage)
+      if (newHp <= 0) {
+        const state = registry.getEntitiesWith([SCHEMA.GAME_STATE])
+        if (state.length > 0) {
+          const gs = state[0]!
+          const gsData = gs.GameState
+          registry.addComponent(gs.id, SCHEMA.GAME_STATE, {
+            money: gsData.money,
+            lives: gsData.lives - 1,
+            wave: gsData.wave,
+            phase: gsData.lives - 1 <= 0 ? 'gameover' : gsData.phase,
+          })
+        }
+        toRemove.push(tower.id)
+        continue
+      }
+      registry.addComponent(tower.id, SCHEMA.TOWER, { ...t, hp: newHp })
+    }
+
+    if (t.towerType === 'bomb') continue
     if (now - t.cooldown < t.fireRate) continue
 
     let closestEnemy: (typeof enemies)[number] | null = null
@@ -42,6 +75,10 @@ export function towerSystem(registry: Registry<TdComponents>): Registry<TdCompon
       ...t,
       cooldown: now,
     })
+  }
+
+  for (const id of toRemove) {
+    registry.removeEntity(id)
   }
 
   return registry

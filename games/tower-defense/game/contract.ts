@@ -12,6 +12,8 @@ export const SCHEMA = {
   WAVE_CONFIG: 'WaveConfig',
   ENEMY: 'Enemy',
   LABEL: 'Label',
+  BOMB: 'Bomb',
+  BOMBER: 'Bomber',
 } as const
 
 export interface TdComponents {
@@ -20,12 +22,14 @@ export interface TdComponents {
   'Health': { current: number; max: number }
   'TargetScanner': { range: number; targetEntity?: number }
   'TdPathFollower': { waypoints: Array<{ x: number; y: number }>; waypointIndex: number; speed: number }
-  'Tower': { range: number; damage: number; fireRate: number; cooldown: number; towerType: string; projectileSpeed?: number; cost: number }
+  'Tower': { range: number; damage: number; fireRate: number; cooldown: number; towerType: string; projectileSpeed?: number; cost: number; hp: number; maxHp: number }
   'Projectile': { targetEntity: number; speed: number; damage: number }
   'GameState': { money: number; lives: number; wave: number; phase: string }
-  'WaveConfig': { count: number; spawned: number; waypoints: Array<{ x: number; y: number }>; enemySpeed: number; enemyHealth: number; spawnInterval: number; reward: number; spawnTimer: number; maxWave: number }
+  'WaveConfig': { count: number; spawned: number; waypoints: Array<{ x: number; y: number }>; enemySpeed: number; enemyHealth: number; spawnInterval: number; reward: number; spawnTimer: number; maxWave: number; hasBomber: boolean }
   'Enemy': { reward: number }
   'Label': { value: string }
+  'Bomb': { damage: number; range: number; placedBy: 'player' | 'enemy'; fuseTimer: number }
+  'Bomber': { bombInterval: number; bombTimer: number; bombDamage: number; bombRange: number; bombFuse: number }
 }
 
 registerSchema('TdPathFollower', {
@@ -42,6 +46,8 @@ registerSchema(SCHEMA.TOWER, {
   towerType: { type: 'string', required: true },
   projectileSpeed: { type: 'number', required: false },
   cost: { type: 'number', required: true },
+  hp: { type: 'number', required: true },
+  maxHp: { type: 'number', required: true },
 })
 
 registerSchema(SCHEMA.PROJECTILE, {
@@ -67,9 +73,25 @@ registerSchema(SCHEMA.WAVE_CONFIG, {
   reward: { type: 'number', required: true },
   spawnTimer: { type: 'number', required: true },
   maxWave: { type: 'number', required: true },
+  hasBomber: { type: 'boolean', required: true },
 })
 
 registerSchema(SCHEMA.ENEMY, {
   reward: { type: 'number', required: true },
+})
+
+registerSchema(SCHEMA.BOMB, {
+  damage: { type: 'number', required: true },
+  range: { type: 'number', required: true },
+  placedBy: { type: 'string', required: true },
+  fuseTimer: { type: 'number', required: true },
+})
+
+registerSchema(SCHEMA.BOMBER, {
+  bombInterval: { type: 'number', required: true },
+  bombTimer: { type: 'number', required: true },
+  bombDamage: { type: 'number', required: true },
+  bombRange: { type: 'number', required: true },
+  bombFuse: { type: 'number', required: true },
 })
 

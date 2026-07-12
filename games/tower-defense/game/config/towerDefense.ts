@@ -8,6 +8,7 @@ export interface TowerDef {
   color: number
   projectileSpeed: number
   projectileColor: number
+  hp: number
 }
 
 export interface WaveDef {
@@ -16,6 +17,7 @@ export interface WaveDef {
   enemyHealth: number
   spawnInterval: number
   reward: number
+  hasBomber?: boolean
 }
 
 export interface Waypoint {
@@ -36,6 +38,7 @@ export const TOWERS: TowerDef[] = [
     color: 0x44aaff,
     projectileSpeed: 5,
     projectileColor: 0x88ccff,
+    hp: 30,
   },
   {
     id: 'cannon',
@@ -47,6 +50,7 @@ export const TOWERS: TowerDef[] = [
     color: 0xff8844,
     projectileSpeed: 3,
     projectileColor: 0xffaa44,
+    hp: 50,
   },
   {
     id: 'magic',
@@ -58,15 +62,35 @@ export const TOWERS: TowerDef[] = [
     color: 0xcc44ff,
     projectileSpeed: 4,
     projectileColor: 0xdd88ff,
+    hp: 40,
+  },
+  {
+    id: 'bomb',
+    name: 'Bomb Trap',
+    cost: 75,
+    damage: 80,
+    range: 1.5,
+    fireRate: 0,
+    color: 0xff4444,
+    projectileSpeed: 0,
+    projectileColor: 0xff4444,
+    hp: 20,
   },
 ]
+
+export const BOMBER_CONFIG = {
+  bombInterval: 3000,
+  bombDamage: 40,
+  bombRange: 1,
+  bombFuse: 2500,
+}
 
 export const WAVES: WaveDef[] = [
   { count: 3, enemySpeed: 1.2, enemyHealth: 30, spawnInterval: 1500, reward: 20 },
   { count: 5, enemySpeed: 1.4, enemyHealth: 35, spawnInterval: 1300, reward: 25 },
-  { count: 7, enemySpeed: 1.5, enemyHealth: 45, spawnInterval: 1200, reward: 30 },
-  { count: 8, enemySpeed: 1.6, enemyHealth: 55, spawnInterval: 1100, reward: 35 },
-  { count: 10, enemySpeed: 1.8, enemyHealth: 65, spawnInterval: 1000, reward: 40 },
+  { count: 7, enemySpeed: 1.5, enemyHealth: 45, spawnInterval: 1200, reward: 30, hasBomber: true },
+  { count: 8, enemySpeed: 1.6, enemyHealth: 55, spawnInterval: 1100, reward: 35, hasBomber: true },
+  { count: 10, enemySpeed: 1.8, enemyHealth: 65, spawnInterval: 1000, reward: 40, hasBomber: true },
 ]
 
 export const WAYPOINTS: Waypoint[] = [

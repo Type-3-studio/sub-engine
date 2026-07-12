@@ -1,6 +1,7 @@
 import { SCHEMA } from '../contract.js'
 import type { Registry } from '@sub-engine/core'
 import type { TdComponents } from '../contract.js'
+import { BOMBER_CONFIG } from '../config/towerDefense.js'
 
 export function waveSystem(registry: Registry<TdComponents>): Registry<TdComponents> {
   const stateEnts = registry.getEntitiesWith([SCHEMA.GAME_STATE])
@@ -34,6 +35,16 @@ export function waveSystem(registry: Registry<TdComponents>): Registry<TdCompone
       registry.addComponent(enemy, SCHEMA.HEALTH, { current: wc.enemyHealth, max: wc.enemyHealth })
       registry.addComponent(enemy, SCHEMA.ENEMY, { reward: wc.reward })
       registry.addComponent(enemy, SCHEMA.LABEL, { value: 'Enemy' })
+
+      if (wc.hasBomber) {
+        registry.addComponent(enemy, SCHEMA.BOMBER, {
+          bombInterval: BOMBER_CONFIG.bombInterval,
+          bombTimer: BOMBER_CONFIG.bombInterval,
+          bombDamage: BOMBER_CONFIG.bombDamage,
+          bombRange: BOMBER_CONFIG.bombRange,
+          bombFuse: BOMBER_CONFIG.bombFuse,
+        })
+      }
 
       registry.addComponent(wave.id, SCHEMA.WAVE_CONFIG, {
         ...wc,

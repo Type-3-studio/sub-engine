@@ -7,6 +7,7 @@ import { enemySystem } from '../game/systems/EnemySystem.js'
 import { towerSystem } from '../game/systems/TowerSystem.js'
 import { projectileSystem } from '../game/systems/ProjectileSystem.js'
 import { waveSystem } from '../game/systems/WaveSystem.js'
+import { bombSystem } from '../game/systems/BombSystem.js'
 import { TOWERS, WAVES, WAYPOINTS, MAP_COLS, MAP_ROWS, TILE_SIZE, STARTING_MONEY, STARTING_LIVES } from '../game/config/towerDefense.js'
 import type { TowerDef } from '../game/config/towerDefense.js'
 
@@ -47,6 +48,7 @@ interface UIHandle {
 export function createGameScene(container: Container, app: Application, gameW: number, gameH: number) {
   const registry: Registry<TdComponents> = createRegistry<TdComponents>()
   const pathCells = getPathCells(WAYPOINTS)
+  const blockedCells = new Set<string>()
   const TICK_INTERVAL = 16
 
   const entities = new Map<number, VisualEntry>()
@@ -102,6 +104,19 @@ export function createGameScene(container: Container, app: Application, gameW: n
     return true
   }
 
+  function canPlaceBomb(gx: number, gy: number): boolean {
+    if (gx < 0 || gx >= MAP_COLS || gy < 0 || gy >= MAP_ROWS) return false
+    if (blockedCells.has(`${gx},${gy}`)) return false
+    const all = registry.getAllEntities()
+    for (const e of all) {
+      const pos = e.Position
+      if (pos && Math.floor(pos.x) === gx && Math.floor(pos.y) === gy) {
+        if (e.Label?.value === 'Tower' || e.Label?.value === 'Bomb') return false
+      }
+    }
+    return true
+  }
+
   function createVisual(entity: TdComponents & { id: number }): VisualEntry {
     const c = new Container()
     const label = entity.Label?.value ?? ''
@@ -137,7 +152,29 @@ export function createGameScene(container: Container, app: Application, gameW: n
         gfx.rect(-TILE_SIZE / 3, -TILE_SIZE / 3, TILE_SIZE / 1.5, TILE_SIZE / 1.5)
         gfx.fill(color)
         c.addChild(gfx)
+        if (tw.maxHp > 0) {
+          const bw = TILE_SIZE / 1.5
+          const bg = new Graphics()
+          bg.rect(-bw / 2, -TILE_SIZE / 3, bw, 3)
+          bg.fill(0x222222)
+          c.addChild(bg)
+          const fill = new Graphics()
+          fill.rect(-bw / 2, -TILE_SIZE / 3, bw * (tw.hp / tw.maxHp), 3)
+          fill.fill(0x44ff44)
+          c.addChild(fill)
+        }
       }
+    } else if (label === 'Bomb') {
+      const bombComp = entity.Bomb
+      const isPlayer = bombComp?.placedBy === 'player'
+      const gfx = new Graphics()
+      gfx.circle(0, 0, TILE_SIZE / 4)
+      gfx.fill(isPlayer ? 0x444444 : 0x662222)
+      c.addChild(gfx)
+      const inner = new Graphics()
+      inner.circle(0, 0, TILE_SIZE / 8)
+      inner.fill(isPlayer ? 0xff4444 : 0xff8844)
+      c.addChild(inner)
     }
 
     entityLayer.addChild(c)
@@ -195,10 +232,17 @@ export function createGameScene(container: Container, app: Application, gameW: n
   function updateGhost(gx: number, gy: number): void {
     ghostLayer.removeChildren()
     if (!selectedTower) return
-    if (!isBuildable(gx, gy)) return
+    const isBomb = selectedTower.id === 'bomb'
+    const placeable = isBomb ? canPlaceBomb(gx, gy) : isBuildable(gx, gy)
+    if (!placeable) return
     const g = new Graphics()
-    g.rect(gx * TILE_SIZE + 2, gy * TILE_SIZE + 2, TILE_SIZE - 4, TILE_SIZE - 4)
-    g.fill({ color: selectedTower.color, alpha: 0.4 })
+    if (isBomb) {
+      g.circle((gx + 0.5) * TILE_SIZE, (gy + 0.5) * TILE_SIZE, TILE_SIZE / 4)
+      g.fill({ color: selectedTower.color, alpha: 0.4 })
+    } else {
+      g.rect(gx * TILE_SIZE + 2, gy * TILE_SIZE + 2, TILE_SIZE - 4, TILE_SIZE - 4)
+      g.fill({ color: selectedTower.color, alpha: 0.4 })
+    }
     ghostLayer.addChild(g)
     const rg = new Graphics()
     rg.circle((gx + 0.5) * TILE_SIZE, (gy + 0.5) * TILE_SIZE, selectedTower.range * TILE_SIZE)
@@ -206,8 +250,36 @@ export function createGameScene(container: Container, app: Application, gameW: n
     ghostLayer.addChild(rg)
   }
 
+  function placeBomb(gx: number, gy: number): boolean {
+    if (!selectedTower || selectedTower.id !== 'bomb' || !canPlaceBomb(gx, gy)) return false
+    const st = registry.getEntitiesWith([SCHEMA.GAME_STATE])
+    if (!st.length) return false
+    const gs = st[0]!
+    if (gs.GameState.money < selectedTower.cost) return false
+
+    registry.addComponent(gs.id, SCHEMA.GAME_STATE, {
+      ...gs.GameState,
+      money: gs.GameState.money - selectedTower.cost,
+    })
+    const b = registry.createEntity()
+    registry.addComponent(b, SCHEMA.POSITION, { x: gx + 0.5, y: gy + 0.5 })
+    registry.addComponent(b, SCHEMA.BOMB, {
+      damage: selectedTower.damage,
+      range: selectedTower.range,
+      placedBy: 'player',
+      fuseTimer: 0,
+    })
+    registry.addComponent(b, SCHEMA.LABEL, { value: 'Bomb' })
+    blockedCells.add(`${gx},${gy}`)
+    sync()
+    uiRef?.update(getState())
+    return true
+  }
+
   function placeTower(gx: number, gy: number): boolean {
-    if (!selectedTower || !isBuildable(gx, gy)) return false
+    if (!selectedTower) return false
+    if (selectedTower.id === 'bomb') return placeBomb(gx, gy)
+    if (!isBuildable(gx, gy)) return false
     const st = registry.getEntitiesWith([SCHEMA.GAME_STATE])
     if (!st.length) return false
     const gs = st[0]!
@@ -227,6 +299,8 @@ export function createGameScene(container: Container, app: Application, gameW: n
       towerType: selectedTower.id,
       projectileSpeed: selectedTower.projectileSpeed,
       cost: selectedTower.cost,
+      hp: selectedTower.hp,
+      maxHp: selectedTower.hp,
     })
     registry.addComponent(tw, SCHEMA.LABEL, { value: 'Tower' })
     sync()
@@ -251,6 +325,7 @@ export function createGameScene(container: Container, app: Application, gameW: n
       reward: wd.reward,
       spawnTimer: 0,
       maxWave: WAVES.length,
+      hasBomber: wd.hasBomber ?? false,
     })
     registry.addComponent(st[0]!.id, SCHEMA.GAME_STATE, { ...s, phase: 'wave' })
     uiRef?.update(getState())
@@ -270,7 +345,8 @@ export function createGameScene(container: Container, app: Application, gameW: n
       waveSystem(registry)
       towerSystem(registry)
       projectileSystem(registry, TICK_INTERVAL)
-      enemySystem(registry, TICK_INTERVAL)
+      bombSystem(registry, TICK_INTERVAL, blockedCells)
+      enemySystem(registry, TICK_INTERVAL, blockedCells)
     }
     const cur = registry.getComponent(st[0]!.id, SCHEMA.GAME_STATE)
     if (cur && (cur.phase !== prev.phase || cur.money !== prev.money || cur.lives !== prev.lives)) {
