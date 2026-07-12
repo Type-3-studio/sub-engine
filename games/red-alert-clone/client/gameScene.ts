@@ -670,9 +670,8 @@ export function createGameScene(container: Container, app: Application, gameW: n
   const loop: GameLoop = createGameLoop({
     tickRate: 62.5,
     maxFrameMs: 100,
-    onStep: () => {
+    onStep: (dt) => {
       if (paused) return
-      const dt = 16
       // Update map cache
       const mapEnts = registry.getEntitiesWith([SCHEMA.MAP_STATE])
       if (mapEnts.length) {

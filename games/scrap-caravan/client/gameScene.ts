@@ -159,14 +159,14 @@ export function createGameScene(container: Container, app: Application) {
     })
   }
 
-  function tick(): void {
+  function tick(dt: number): void {
     economySystem(registry)
-    droneSystem(registry, TICK_INTERVAL)
-    movementSystem(registry, TICK_INTERVAL)
-    miningSystem(registry, TICK_INTERVAL)
-    combatSystem(registry, TICK_INTERVAL)
-    weatherSystem(registry, TICK_INTERVAL)
-    waveSystem(registry, TICK_INTERVAL)
+    droneSystem(registry, dt)
+    movementSystem(registry, dt)
+    miningSystem(registry, dt)
+    combatSystem(registry, dt)
+    weatherSystem(registry, dt)
+    waveSystem(registry, dt)
 
     const all = registry.getAllEntities()
     entityRenderer.sync(all)

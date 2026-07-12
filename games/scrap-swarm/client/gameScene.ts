@@ -417,21 +417,21 @@ export function createGameScene(container: Container, app: Application) {
     } catch { console.error('Load failed') }
   }
 
-  function tick(): void {
+  function tick(dt: number): void {
     snapshotHP()
-    workerSystem(registry, TICK_MS)
-    combatSystem(registry, TICK_MS)
-    enemySystem(registry, TICK_MS)
-    projectileSystem(registry, TICK_MS)
-    movementSystem(registry, TICK_MS)
-    waveSystem(registry, TICK_MS)
-    economySystem(registry, TICK_MS)
-    collisionSystem(registry, TICK_MS)
-    particleSystem(registry as any, TICK_MS)
+    workerSystem(registry, dt)
+    combatSystem(registry, dt)
+    enemySystem(registry, dt)
+    projectileSystem(registry, dt)
+    movementSystem(registry, dt)
+    waveSystem(registry, dt)
+    economySystem(registry, dt)
+    collisionSystem(registry, dt)
+    particleSystem(registry as any, dt)
     handleDeath()
     detectDamage()
     handleCameraInput()
-    cameraSystem(registry, TICK_MS)
+    cameraSystem(registry, dt)
     entityRenderer.sync(registry.getAllEntities())
   }
 
