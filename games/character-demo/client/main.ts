@@ -1,7 +1,8 @@
 import { Application, Graphics, Text, Container, AnimatedSprite } from 'pixi.js'
 import { createRegistry, movementSystem } from '@sub-engine/core'
 import { createResponsiveContainer } from '@sub-engine/pixi'
-import { createAnimManager } from '@sub-engine/pixi'
+import { createPlaceholderAnimManager } from '@sub-engine/pixi'
+import type { PlaceholderSpriteManager } from '@sub-engine/pixi'
 import { animationSystem } from '../game/systems/AnimationSystem.js'
 import { SCHEMA } from '../game/contract.js'
 import { ANIM_SEQUENCES, TILE_SIZE, MOVE_SPEED, getAnimName } from '../game/config/character.js'
@@ -49,7 +50,10 @@ export async function init(): Promise<void> {
     interact: false,
   })
 
-  const spriteManager = await createAnimManager(ANIM_SEQUENCES)
+  const spriteManager: PlaceholderSpriteManager = await createPlaceholderAnimManager(ANIM_SEQUENCES, {
+    frameWidth: FRAME_SIZE,
+    frameHeight: FRAME_SIZE,
+  })
 
   const bgLayer = new Graphics()
   container.addChild(bgLayer)
