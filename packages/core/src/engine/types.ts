@@ -15,8 +15,10 @@ export interface Vec2 {
   y: number
 }
 
+export type SchemaFieldTypes = 'number' | 'string' | 'boolean' | 'integer' | 'array' | 'object' | 'any'
+
 export interface SchemaFieldDef {
-  type: 'number' | 'string' | 'boolean' | 'integer' | 'array'
+  type: SchemaFieldTypes
   required: boolean
 }
 

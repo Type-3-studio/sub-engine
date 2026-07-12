@@ -8,6 +8,8 @@ const TYPES: Record<string, (v: unknown) => boolean> = {
   boolean: (v): v is boolean => typeof v === 'boolean',
   integer: (v): v is number => Number.isInteger(v),
   array: (v): boolean => Array.isArray(v),
+  object: (v): v is Record<string, unknown> => typeof v === 'object' && !Array.isArray(v) && v !== null,
+  any: (): boolean => true,
 }
 
 export function registerSchema(name: string, fields: Record<string, SchemaFieldDef>): RegisteredSchema {
@@ -76,6 +78,13 @@ export function validateAllSchemas(requiredSchemas: string[]): void {
       `Add registerSchema('${missing[0]}', { ... }) before use.`
     )
   }
+}
+
+export function defineSchema<T extends Record<string, unknown>>(
+  name: string,
+  fields: { [K in keyof T]: SchemaFieldDef }
+): RegisteredSchema {
+  return registerSchema(name, fields)
 }
 
 export { SCHEMAS }

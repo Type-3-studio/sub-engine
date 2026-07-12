@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { createRegistry, registerSchema, validateAllSchemas, schemaExists, SCHEMAS } from '@sub-engine/core'
+import { createRegistry, registerSchema, defineSchema, validateAllSchemas, schemaExists, SCHEMAS } from '@sub-engine/core'
 import { createEntity } from '@sub-engine/core'
 import { createGameLoop } from '@sub-engine/core'
 
@@ -28,6 +28,95 @@ describe('Schema Validation', () => {
 
   it('can register a custom schema', () => {
     expect(() => registerSchema('Tag', {})).not.toThrow()
+  })
+})
+
+describe('Object Schema Type', () => {
+  it('accepts object data for object-typed fields', () => {
+    registerSchema('WithObject', {
+      nested: { type: 'object', required: true },
+      label: { type: 'string', required: true },
+    })
+    const reg = createRegistry()
+    const e = reg.createEntity()
+    expect(() => reg.addComponent(e, 'WithObject', { nested: { a: 1, b: 2 }, label: 'test' })).not.toThrow()
+  })
+
+  it('rejects non-object data for object-typed fields', () => {
+    const reg = createRegistry()
+    const e = reg.createEntity()
+    expect(() => reg.addComponent(e, 'WithObject', { nested: 'not-an-object', label: 'test' } as any)).toThrow()
+  })
+
+  it('rejects null for required object field', () => {
+    const reg = createRegistry()
+    const e = reg.createEntity()
+    expect(() => reg.addComponent(e, 'WithObject', { nested: null, label: 'test' } as any)).toThrow()
+  })
+
+  it('rejects array for object-typed field', () => {
+    const reg = createRegistry()
+    const e = reg.createEntity()
+    expect(() => reg.addComponent(e, 'WithObject', { nested: [1, 2, 3], label: 'test' } as any)).toThrow()
+  })
+})
+
+describe('Any Schema Type', () => {
+  it('accepts all data types for any-typed fields', () => {
+    registerSchema('WithAny', {
+      flexible: { type: 'any', required: true },
+    })
+    const reg = createRegistry()
+    const e = reg.createEntity()
+    expect(() => reg.addComponent(e, 'WithAny', { flexible: 42 })).not.toThrow()
+    reg.removeComponent(e, 'WithAny')
+    expect(() => reg.addComponent(e, 'WithAny', { flexible: 'hello' })).not.toThrow()
+    reg.removeComponent(e, 'WithAny')
+    expect(() => reg.addComponent(e, 'WithAny', { flexible: { a: 1 } })).not.toThrow()
+    reg.removeComponent(e, 'WithAny')
+    expect(() => reg.addComponent(e, 'WithAny', { flexible: [1, 2, 3] })).not.toThrow()
+    reg.removeComponent(e, 'WithAny')
+    expect(() => reg.addComponent(e, 'WithAny', { flexible: true })).not.toThrow()
+  })
+
+  it('accepts any for optional fields', () => {
+    registerSchema('OptionalAny', {
+      maybe: { type: 'any', required: false },
+    })
+    const reg = createRegistry()
+    const e = reg.createEntity()
+    expect(() => reg.addComponent(e, 'OptionalAny', {})).not.toThrow()
+    expect(() => reg.addComponent(e, 'OptionalAny', { maybe: 'anything' })).not.toThrow()
+    reg.removeComponent(e, 'OptionalAny')
+    expect(() => reg.addComponent(e, 'OptionalAny', { maybe: null })).not.toThrow()
+  })
+})
+
+describe('defineSchema type-safe wrapper', () => {
+  it('registers schema and returns RegisteredSchema', () => {
+    const schema = defineSchema<{ name: string; count: number }>('DefineTest1', {
+      name: { type: 'string', required: true },
+      count: { type: 'number', required: true },
+    })
+    expect(schema.name).toBe('DefineTest1')
+    expect(schema.fields.name).toEqual({ type: 'string', required: true })
+  })
+
+  it('works with optional fields', () => {
+    defineSchema<{ id: number; tag?: string }>('DefineTest2', {
+      id: { type: 'number', required: true },
+      tag: { type: 'string', required: false },
+    })
+    expect(schemaExists('DefineTest2')).toBe(true)
+  })
+
+  it('validates at runtime like registerSchema (rejects bad data)', () => {
+    defineSchema<{ value: number }>('DefineTest3', {
+      value: { type: 'number', required: true },
+    })
+    const reg = createRegistry()
+    const e = reg.createEntity()
+    expect(() => reg.addComponent(e, 'DefineTest3', { value: 'not-a-number' } as any)).toThrow()
   })
 })
 
