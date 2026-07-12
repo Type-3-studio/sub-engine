@@ -61,6 +61,11 @@ export interface Registry<M extends ComponentMap = Record<string, any>> {
   getComponentReadonly<K extends keyof M & string>(entityId: number, componentName: K): Readonly<M[K]> | undefined
   getEntitiesWith<K extends keyof M & string>(componentNames: K): EntityWith<M, [K]>[]
   getEntitiesWith<K extends (keyof M & string)[]>(componentNames: K): EntityWith<M, K>[]
+  /** Returns a full deep copy of every entity and component. Expensive — cache result when iterating multiple times. */
+  getAllEntitiesCopy(): Entity<M>[]
+  /** Returns internal references — no copy. Mutating returned objects corrupts registry state. Use only in read-only hot paths. */
+  getAllEntitiesReadonly(): Readonly<Entity<M>>[]
+  /** @deprecated Use getAllEntitiesCopy() — the name better communicates the deep-copy cost. */
   getAllEntities(): Entity<M>[]
   clear(): void
   entityCount(): number

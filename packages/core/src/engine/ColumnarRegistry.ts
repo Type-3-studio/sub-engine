@@ -251,7 +251,7 @@ export function createColumnarRegistry<M extends ComponentMap = Record<string, a
     return result
   }
 
-  function getAllEntities(): any[] {
+  function getAllEntitiesCopy(): any[] {
     const result: any[] = []
     for (let eid = 1; eid < nextId; eid++) {
       const r = row(eid)
@@ -267,6 +267,32 @@ export function createColumnarRegistry<M extends ComponentMap = Record<string, a
     }
     return result
   }
+
+  function getAllEntitiesReadonly(): any[] {
+    const result: any[] = []
+    for (let eid = 1; eid < nextId; eid++) {
+      const r = row(eid)
+      if (!exists[r]) continue
+      const entity: Record<string, any> = { id: eid }
+      const comps = entityComponents.get(eid)
+      if (comps) {
+        for (const name of comps) {
+          const store = stores.get(name)
+          if (store && store.presence[r]) {
+            const data: Record<string, unknown> = {}
+            for (const [fieldName, col] of store.columns) {
+              data[fieldName] = readValue(col, r)
+            }
+            entity[name] = data
+          }
+        }
+      }
+      result.push(entity)
+    }
+    return result
+  }
+
+  const getAllEntities = getAllEntitiesCopy
 
   function serialize(): SerializedRegistry {
     const entities: SerializedEntity[] = []
@@ -353,6 +379,8 @@ export function createColumnarRegistry<M extends ComponentMap = Record<string, a
     getComponent: getComponent as Registry<M>['getComponent'],
     getComponentReadonly: getComponentReadonly as Registry<M>['getComponentReadonly'],
     getEntitiesWith: getEntitiesWith as Registry<M>['getEntitiesWith'],
+    getAllEntitiesCopy: getAllEntitiesCopy as Registry<M>['getAllEntitiesCopy'],
+    getAllEntitiesReadonly: getAllEntitiesReadonly as Registry<M>['getAllEntitiesReadonly'],
     getAllEntities: getAllEntities as Registry<M>['getAllEntities'],
     clear,
     entityCount,

@@ -119,7 +119,7 @@ export function createRegistry<M extends ComponentMap = Record<string, any>>(): 
     return result
   }
 
-  function getAllEntities(): any[] {
+  function getAllEntitiesCopy(): any[] {
     const result: any[] = []
     for (const [id, components] of entities) {
       const entity: Record<string, any> = { id }
@@ -130,6 +130,20 @@ export function createRegistry<M extends ComponentMap = Record<string, any>>(): 
     }
     return result
   }
+
+  function getAllEntitiesReadonly(): any[] {
+    const result: any[] = []
+    for (const [id, components] of entities) {
+      const entity: Record<string, any> = { id }
+      for (const [compName, compData] of components) {
+        entity[compName] = compData
+      }
+      result.push(entity)
+    }
+    return result
+  }
+
+  const getAllEntities = getAllEntitiesCopy
 
   function serialize(): SerializedRegistry {
     const serializedEntities: SerializedEntity[] = []
@@ -179,6 +193,8 @@ export function createRegistry<M extends ComponentMap = Record<string, any>>(): 
     getComponent: getComponent as Registry<M>['getComponent'],
     getComponentReadonly: getComponentReadonly as Registry<M>['getComponentReadonly'],
     getEntitiesWith: getEntitiesWith as Registry<M>['getEntitiesWith'],
+    getAllEntitiesCopy: getAllEntitiesCopy as Registry<M>['getAllEntitiesCopy'],
+    getAllEntitiesReadonly: getAllEntitiesReadonly as Registry<M>['getAllEntitiesReadonly'],
     getAllEntities: getAllEntities as Registry<M>['getAllEntities'],
     clear,
     entityCount,

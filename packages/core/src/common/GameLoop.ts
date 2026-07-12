@@ -11,7 +11,7 @@ export interface GameLoop {
 export interface GameLoopOptions {
   tickRate?: number
   maxFrameMs?: number
-  onStep: () => void
+  onStep: (dt: number) => void
   onFrame?: (alpha: number) => void
 }
 
@@ -26,7 +26,7 @@ export function createGameLoop(options: GameLoopOptions): GameLoop {
   let tickAcc = 0
 
   function step(): void {
-    onStep()
+    onStep(tickInterval)
   }
 
   function loop(t: number): void {

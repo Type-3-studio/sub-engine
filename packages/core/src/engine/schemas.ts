@@ -165,3 +165,7 @@ registerSchema('Particle', {
   color: { type: 'string', required: true },
   size: { type: 'number', required: true },
 })
+
+registerSchema('Label', {
+  value: { type: 'string', required: true },
+})
