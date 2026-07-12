@@ -44,7 +44,21 @@ Always use `SCHEMA.XXX` constants — never raw strings.
 
 ### Debug
 - F12 toggles the `DebugOverlay` (FPS, entity list, inspect mode)
-- I key + click to inspect entity component data
+- `i` key + click to inspect entity component data
+- `Ctrl+I` toggles pause (freezes simulation, overlay stays interactive)
+- Pass `onTogglePause` callback to sync with game loop:
+  ```ts
+  new DebugOverlay(app, getSnapshot, () => gameLoop.pause())
+  ```
+
+### Placeholder Assets
+- During early development, use `createPlaceholderAnimManager()` from `@sub-engine/pixi`
+- Define all animation sequences in `src/game/config/` as `PngSequenceDef[]`
+- The function generates canvas textures at runtime and returns a `SpriteManager` (same interface as `createAnimManager`)
+- A full `AssetManifest` is available at `spriteManager.manifest` and logged to console
+- Each frame shows: animation name, frame index/total, dimensions, and a colored shape
+- **Generate a static `ASSETS.md` file** from the same config listing every required PNG path — the user uses this as a checklist when replacing placeholders with real art
+- Switch to `createAnimManager()` when real PNGs are placed in `public/`
 
 ## Running
 ```bash

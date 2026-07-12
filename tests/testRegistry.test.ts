@@ -570,44 +570,68 @@ describe('createEntity Factory', () => {
 })
 
 describe('GameLoop', () => {
-  it('has start, stop, step, isRunning', () => {
-    const lreg = createRegistry()
-    const loop = createGameLoop(lreg, [
-      (reg, _dt) => { return reg },
-    ])
+  it('has start, stop, pause, resume, step, isRunning, isPaused', () => {
+    const loop = createGameLoop({ onStep: () => {} })
     expect(typeof loop.start).toBe('function')
     expect(typeof loop.stop).toBe('function')
+    expect(typeof loop.pause).toBe('function')
+    expect(typeof loop.resume).toBe('function')
     expect(typeof loop.step).toBe('function')
     expect(typeof loop.isRunning).toBe('function')
+    expect(typeof loop.isPaused).toBe('function')
   })
 
   it('not running initially', () => {
-    const lreg = createRegistry()
-    const loop = createGameLoop(lreg, [
-      (reg, _dt) => { return reg },
-    ])
+    const loop = createGameLoop({ onStep: () => {} })
     expect(loop.isRunning()).toBe(false)
   })
 
-  it('step invokes system once', () => {
-    const lreg = createRegistry()
+  it('not paused initially', () => {
+    const loop = createGameLoop({ onStep: () => {} })
+    expect(loop.isPaused()).toBe(false)
+  })
+
+  it('step invokes onStep once', () => {
     let callCount = 0
-    const loop = createGameLoop(lreg, [
-      (reg, _dt) => { callCount++; return reg },
-    ])
+    const loop = createGameLoop({ onStep: () => { callCount++ } })
     loop.step()
     expect(callCount).toBe(1)
   })
 
   it('step works for multiple calls', () => {
-    const lreg = createRegistry()
     let callCount = 0
-    const loop = createGameLoop(lreg, [
-      (reg, _dt) => { callCount++; return reg },
-    ])
+    const loop = createGameLoop({ onStep: () => { callCount++ } })
     loop.step()
     loop.step()
     loop.step()
     expect(callCount).toBe(3)
+  })
+
+  it('pause sets isPaused', () => {
+    const loop = createGameLoop({ onStep: () => {} })
+    expect(loop.isPaused()).toBe(false)
+    loop.pause()
+    expect(loop.isPaused()).toBe(true)
+  })
+
+  it('resume clears isPaused', () => {
+    const loop = createGameLoop({ onStep: () => {} })
+    loop.pause()
+    expect(loop.isPaused()).toBe(true)
+    loop.resume()
+    expect(loop.isPaused()).toBe(false)
+  })
+
+  it('resume is no-op if not paused', () => {
+    const loop = createGameLoop({ onStep: () => {} })
+    loop.resume()
+    expect(loop.isPaused()).toBe(false)
+  })
+
+  it('stop clears paused state', () => {
+    const loop = createGameLoop({ onStep: () => {} })
+    loop.pause()
+    loop.stop()
+    expect(loop.isPaused()).toBe(false)
   })
 })

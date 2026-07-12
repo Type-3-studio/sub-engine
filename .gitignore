@@ -3,3 +3,4 @@ dist/
 *.local
 coverage/
 tests/benchmarks/
+games/my-rpg/
