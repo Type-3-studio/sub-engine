@@ -15,10 +15,6 @@ const ALTAR_HP = 50
 const SCANNER_RANGE = 3
 const DAMAGE_PER_TICK = 10
 
-registerSchema('Label', {
-  value: { type: 'string', required: true },
-})
-
 const MAP_MATRIX: number[][] = [
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],

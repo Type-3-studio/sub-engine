@@ -91,6 +91,3 @@ registerSchema(SCHEMA.PERSON, {
   idleTimer: { type: 'number', required: true },
 })
 
-registerSchema(SCHEMA.LABEL, {
-  value: { type: 'string', required: true },
-})

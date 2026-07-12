@@ -12,6 +12,3 @@ export interface MovementComponents {
   'Label': { value: string }
 }
 
-registerSchema('Label', {
-  value: { type: 'string', required: true },
-})

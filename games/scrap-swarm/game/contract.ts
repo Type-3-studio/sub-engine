@@ -57,10 +57,6 @@ export interface ScrapSwarmComponents extends ComponentMap {
   'Spawner': { x: number; y: number; wave: number; interval: number; variant: string; active: boolean }
 }
 
-registerSchema(SCHEMA.LABEL, {
-  value: { type: 'string', required: true },
-})
-
 registerSchema(SCHEMA.GAME_STATE, {
   phase: { type: 'string', required: true },
   wave: { type: 'number', required: true },

@@ -40,6 +40,3 @@ export interface CameraDemoComponents {
   }
 }
 
-registerSchema(SCHEMA.LABEL, {
-  value: { type: 'string', required: true },
-})

@@ -30,10 +30,6 @@ export interface CharacterComponents {
   }
 }
 
-registerSchema(SCHEMA.LABEL, {
-  value: { type: 'string', required: true },
-})
-
 registerSchema(SCHEMA.ANIM_STATE, {
   anim: { type: 'string', required: true },
   dir: { type: 'string', required: true },

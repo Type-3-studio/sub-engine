@@ -93,6 +93,3 @@ registerSchema(SCHEMA.GRID_CELL, {
   resourceType: { type: 'any', required: false },
 })
 
-registerSchema(SCHEMA.LABEL, {
-  value: { type: 'string', required: true },
-})

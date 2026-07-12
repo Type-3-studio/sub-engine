@@ -65,9 +65,6 @@ export interface RaComponents {
   'AITimer': { timer: number }
 }
 
-registerSchema('Label', {
-  value: { type: 'string', required: true },
-})
 
 registerSchema('Owner', {
   faction: { type: 'string', required: true },

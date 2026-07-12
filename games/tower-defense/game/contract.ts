@@ -73,6 +73,3 @@ registerSchema(SCHEMA.ENEMY, {
   reward: { type: 'number', required: true },
 })
 
-registerSchema(SCHEMA.LABEL, {
-  value: { type: 'string', required: true },
-})
