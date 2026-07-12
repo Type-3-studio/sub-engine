@@ -58,8 +58,16 @@
 │   ├── serialization-demo/      #   Save/load registry state
 │   ├── character-demo/          #   Animated character sprite sheets
 │   ├── tilemap-demo/            #   Tiled map integration
-│   └── camera-demo/             #   Camera follow, zoom, collision
-├── tests/                       # Engine tests (187 vitest tests)
+│   ├── camera-demo/             #   Camera follow, zoom, collision
+│   ├── scrap-caravan/           #   Headless sim, economy, flow field drones
+│   ├── scrap-swarm/             #   Large-scale RTS swarm combat (stress test)
+│   ├── my-rpg/                  #   Altar-defender RPG with composite visuals
+│   └── red-alert-clone/         #   C&C-inspired RTS
+├── docs/                        # Architecture docs, retrospectives, plans
+│   ├── scrap-swarm-retrospective.md
+│   ├── engine-review-summary.md
+│   └── architecture/            #   ADRs, RFCs, technical debt register
+├── tests/                       # Engine tests (201 vitest tests)
 ├── src/                         # Root dev playground
 │   ├── game/                    #   Template game code
 │   └── client/                  #   Template client code
@@ -153,7 +161,7 @@ Backtick (\`) is the fallback when F12 is captured by the browser (e.g., Chrome 
 | DDL-008 | Common systems independent of game contracts | Reusability across games |
 | DDL-009 | `destroy()` required on every PIXI removeChild | GPU memory leaks without it (see retrospective) |
 | DDL-010 | Velocity always scaled by `(dt/16)` | Ensures frame-rate-independent movement |
-| DDL-011 | Cache `getAllEntities()` across iterations per frame | Each call is a full deep copy — expensive |
+| DDL-011 | Cache `getAllEntitiesCopy()` across iterations per frame | Each call is a full deep copy — expensive |
 
 ## Running
 
@@ -170,6 +178,9 @@ npm run dev:character      # Animated sprites
 npm run dev:camera         # Camera follow
 npm run dev:tilemap        # Tiled maps
 npm run dev:swarm          # Scrap Swarm (stress test game)
+npm run dev:scrap          # Scrap Caravan (headless sim)
+npm run dev:ra             # Red Alert clone
+npm run dev:rpg            # My-RPG / Altar defender
 npm run typecheck          # Full type check (0 errors)
 npm test                   # Run 201 engine tests
 npm run build:pkgs         # Build both packages to dist/
@@ -177,7 +188,7 @@ npm run build:pkgs         # Build both packages to dist/
 
 ## Reference Games
 
-All 10 reference games compile and work. They import from the correct packages:
+All reference games compile and work. They import from the correct packages:
 - `@sub-engine/core` for headless systems, Registry, utilities
 - `@sub-engine/pixi` for rendering, responsive container, debug overlay
 
@@ -194,7 +205,7 @@ The template produces a standalone project with `@sub-engine/core` and `@sub-eng
 
 ## Retrospective
 
-A full postmortem of the Scrap Swarm game is at `docs/scrap-swarm-retrospective.md` — read it before building new games. It documents 6 memory/movement bugs found during development, their root causes, the engine gaps that allowed them, and a checklist for future games.
+A full postmortem of the Scrap Swarm game is at `docs/scrap-swarm-retrospective.md` and `docs/engine-review-summary.md` — read before building new games. They document 6 memory/movement bugs found during development, their root causes, the engine gaps that allowed them, and a checklist for future games.
 
 ## Performance & Memory
 
