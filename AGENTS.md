@@ -83,13 +83,17 @@ sub-engine/
 │   │   ├── Registry.ts     #   Generic entity/component store
 │   │   ├── schemas.ts      #   Runtime schema validation + 4 built-in schemas
 │   │   ├── MapLoader.ts    #   2D matrix → walkable grid
-│   │   └── FlowFieldNav.ts #   BFS integration → flow vectors
+│   │   ├── FlowFieldNav.ts #   BFS integration → flow vectors
+│   │   └── TiledMapLoader.ts #   Tiled JSON parser + GameMap converter
 │   ├── common/             # ★ Reusable utilities — import, extend
 │   │   ├── index.ts        #   Barrel exports
 │   │   ├── responsive.ts   #   Responsive scaling for any screen
+│   │   ├── spriteLoader.ts #   PNG sequence → AnimatedSprite loader
+│   │   ├── TiledMapRenderer.ts #   PixiJS tilemap rendering (spritesheet + collection-of-images)
 │   │   └── systems/        #   Generic reusable ECS systems
 │   │       ├── MovementSystem.ts  # Position + Velocity → move entity
-│   │       └── CombatSystem.ts    # TargetScanner → damage Health
+│   │       ├── CombatSystem.ts    # TargetScanner → damage Health
+│   │       └── TileMapSystem.ts   # Tile map utility (getTileAt, setTileAt)
 │   ├── game/               # ★ TEMPLATE — replace entirely for your game
 │   │   ├── contract.ts     #   Contract file: ComponentMap + schema registrations
 │   │   ├── config/
@@ -108,11 +112,15 @@ sub-engine/
 │   ├── map-demo/            #   Interactive map + pathfinding demo
 │   ├── input-demo/          #   Scaled container input handler demo
 │   ├── serialization-demo/  #   Save/load registry state demo
+│   ├── character-demo/      #   Animated character with sprite sheets
+│   ├── tilemap-demo/        #   Tile map demo (Tiled integration)
 │   └── castle/             #   Castle management game (WIP, still .js)
+├── PNG Tiles/               # 89 summer-themed tile PNGs (56 ground + 33 props)
 ├── tests/
 │   ├── testRegistry.ts     # Engine unit tests (45)
 │   ├── testNavigation.ts   # Map/flow field tests (23)
-│   └── simRunner.ts        # Headless flow-field simulation
+│   ├── simRunner.ts        # Headless flow-field simulation
+│   └── testTiledMapLoader.ts # Tiled map loader tests (40)
 ├── ROADMAP.md
 ├── AGENTS.md               # This file
 └── vite.config.js
@@ -161,10 +169,107 @@ When the game uses a scaled virtual container for responsive layout:
 - Instead: listen on `app.stage`, use `FederatedPointerEvent`, convert via `container.toLocal(new Point(e.clientX, e.clientY), app.stage)`, then check bounds manually
 - Import `FederatedPointerEvent` from `pixi.js` for proper event typing
 
+## Tile Map Architecture
+
+### Tiled Compatibility
+The engine fully supports [Tiled](https://www.mapeditor.org/) map editor export. The workflow:
+1. Create/edit maps in Tiled → export as JSON (.tmj + .tsj)
+2. Place JSON files in `games/<your-game>/assets/`
+3. Load at runtime: `const map = await loadTiledMap('./assets/my-map.tmj')`
+
+**Key files:**
+- `src/engine/TiledMapLoader.ts` — Parse Tiled JSON format (`.tmj`/`.tsj`), resolve external tilesets, convert to `GameMap` for pathfinding
+- `src/common/TiledMapRenderer.ts` — PixiJS rendering: loads tileset textures (supports spritesheet and collection-of-images), renders layered tilemaps
+- `src/common/systems/TileMapSystem.ts` — Headless ECS system for tile map data (empty by default, extend for game-specific tile logic)
+
+**Tileset formats supported:**
+- **Single image spritesheet** — Tileset has `image`, `imagewidth`, `imageheight`, `columns`
+- **Collection of images** — Tileset has `tiles` array with `{id, image}` per tile
+- **External TSJ files** — TMJ references `.tsj` file via `"source"` field (loaded recursively)
+
+### Loading API
+```ts
+// From URL (resolves external tilesets automatically):
+const tiledMap = await loadTiledMap('./assets/map.tmj')
+
+// From JSON string:
+const json = await fetch('./assets/map.tmj').then(r => r.text())
+const tiledMap = parseTiledMap(json, './assets')
+
+// Convert to GameMap for pathfinding:
+const gameMap = tiledMapToGameMap(tiledMap, 'ground') // uses 'ground' layer
+```
+
+### PixiJS Rendering (with scale)
+```ts
+import { createTiledMapRenderer } from '../../../src/common/index.js'
+
+// Scale = 0.25 renders 256px tiles as 64px on screen
+const renderer = await createTiledMapRenderer(tiledMap, 0.25)
+container.addChild(renderer.container)
+// later: renderer.destroy()
+```
+
+### Procedural Map Creation
+```ts
+import { createProceduralMap } from '../../../src/common/index.js'
+
+const map = createProceduralMap(12, 10, 256, (x, y) => {
+  if (x === 0 || y === 0) return 1  // GID 1 = grass
+  return 0 // empty
+})
+```
+
+### ECS Integration
+Store the parsed map as a `TileMap` component on a world entity:
+```ts
+registry.addComponent(worldEntity, SCHEMA.TILE_MAP, tiledMapData)
+// Then read it in systems:
+const mapData = registry.getComponent(worldEntity, SCHEMA.TILE_MAP)
+```
+
+## Asset Sizing Conventions (PNG Tiles)
+
+The `PNG Tiles/` folder contains 256×256 ground tiles and larger props (up to 480×640). To keep maps at a reasonable screen size, use a `RENDER_SCALE` factor:
+
+| Setting | Tile (px) | 12×10 map (px) | Use case |
+|---------|-----------|----------------|----------|
+| `RENDER_SCALE = 1.0` | 256 | 3072×2560 | Full-res, very large |
+| `RENDER_SCALE = 0.5` | 128 | 1536×1280 | High-res, large map |
+| `RENDER_SCALE = 0.25` | 64 | 768×640 | Good default |
+
+The responsive container (`createResponsiveContainer`) then scales the virtual game area to fit the viewport — so the game looks correct at any screen size.
+
+**Asset pipeline options** (from easiest to most performant):
+
+1. **Symlink + collection-of-images** (current default) — Symlink `assets/tiles/ → ../../PNG Tiles/`, TSJ references individual `./tiles/*.png`. No preprocessing, works with any tile count. Used by the tilemap-demo reference game.
+
+2. **Spritesheet** — Run `scripts/build-tileset.mjs` (requires `sharp`) to stitch all tiles into a single PNG with a standalone TSJ. One HTTP request for all tiles. More complex setup but better for production.
+
+3. **Tiled workflow** — Create tilemaps in Tiled editor, export as `.tmj`+`.tsj`, place in `assets/`. The engine loads them at runtime. Edit → export → refresh — no code changes needed for map layout.
+
+**How to export from Tiled:**
+1. Open your map in Tiled.
+2. In the tileset panel, make sure tilesets reference `./tiles/` for images (or use the standalone spritesheet).
+3. File → Export As → choose `JSON (Tiled Map) (*.tmj)`.
+4. Save to `games/<your-game>/assets/`.
+5. The engine's `loadTiledMap(url)` fetches the `.tmj`, recursively resolves external `.tsj` files, and converts to `TiledMapData`.
+6. If you added/changed layers, update the layer name in `tiledMapToGameMap(tiledMap, 'ground')`.
+7. Refresh the browser — no build step needed.
+
+### Demo (`games/tilemap-demo/`)
+Complete reference implementation showing:
+- Procedural map generation with ground tiles
+- Tiled map loading from `.tmj`/`.tsj` files
+- `RENDER_SCALE` config for controlling display size independently of source PNGs
+- Interactive tile editing (click to cycle ground types)
+- Flow field overlay (F key)
+- Map reload (R key) / procedural map (P key)
+
 ## Running Tests
 ```bash
 npm run typecheck                    # tsc --noEmit (full type check)
-npm test                             # tsx tests/testRegistry.ts  +  tsx tests/testNavigation.ts  +  tsx tests/simRunner.ts
+npm test                             # tsx tests/testRegistry.ts  +  tsx tests/testNavigation.ts  +  tsx tests/simRunner.ts + tsx tests/testTiledMapLoader.ts
 npm run dev                          # Template (place holder)
 npm run dev:td                       # Tower defense reference game
 npm run dev:castle                   # Castle reference game
@@ -173,5 +278,99 @@ npm run dev:combat                   # Combat demo (archers vs melee)
 npm run dev:map                      # Map demo (click walls, pathfinding)
 npm run dev:input                    # Input demo (scaled container, drag)
 npm run dev:serial                   # Serialization demo (save/load)
+npm run dev:tilemap                  # Tile map demo (Tiled integration)
 ```
 All test scripts exit with code 0 on pass, 1 on failure. Type checking is separate via `npm run typecheck`.
+
+---
+
+## Unified Action Plan (ROADMAP.md)
+
+**`ROADMAP.md` is the canonical action plan.** Read it before every session to understand:
+- Which phase we are in (see "Current Phase" dashboard)
+- What tasks are pending vs complete
+- What design decisions are locked (DDL entries)
+
+**AI agents must follow these rules when working:**
+1. Read `ROADMAP.md` first. Identify current phase and task.
+2. Check the DDL before making any architectural choice.
+3. Do not implement features from phases ahead of the current one unless explicitly asked.
+4. Update `ROADMAP.md` task status when completing work.
+5. Add Lessons Learned entries for anything surprising.
+
+---
+
+## Design Decision Log (DDL) — Quick Reference
+
+These are locked. Do not reverse without a superseding entry in ROADMAP.md.
+
+| ID | Decision | Rationale |
+|----|----------|-----------|
+| DDL-001 | AI-first, pure-data ECS (integers + flat JSON) | AI transparency, free serialization, dynamic schemas |
+| DDL-002 | Headless-first (sim runs in Node.js, PixiJS is bridge) | Server-side sim, testing without browser, AI training |
+| DDL-003 | Stateless pure function systems `(registry) => registry` | Predictable, testable, AI-reasoning-friendly |
+| DDL-004 | Pure data copies on read (`getComponent` returns fresh copy) | Prevents accidental mutation; columnar upgrade path later |
+| DDL-005 | Schema validation on every `addComponent` call | Catches AI typos/type errors instantly |
+| DDL-006 | Factory functions over classes (`createRegistry()` not `new Registry`) | Consistency with functional ECS |
+| DDL-007 | Component schemas registered via `registerSchema()` before use | Runtime type safety for AI-generated code |
+| DDL-008 | Common systems must NOT import from `src/game/contract.js` | Reusability; use parameterized component names instead |
+
+---
+
+## Architectural Constraints (for AI agents)
+
+These are patterns that must be followed in ALL code:
+
+### Systems
+```
+❌ system(registry: Registry) → system(registry: Registry)
+   import { SCHEMA } from '../../game/contract.js'  // WRONG — see DDL-008
+
+✅ system(registry: Registry, dt: number) → system(registry: Registry, dt: number)
+   // component names as parameters or local constants
+```
+
+### Component Design
+```
+❌ { type: 'Position', data: { x: 10, y: 20, z: 0, layer: 'ground', label: 'foo' } }
+   // Too many concerns in one component
+
+✅ { type: 'Position', data: { x: 10, y: 20 } }
+   // One concern per component. Compose: Position + ZOrder + Label
+```
+
+### Game Loop
+```
+// CORRECT fixed-timestep pattern:
+const FIXED_DT = 1000 / 60  // 16.67ms
+function tick(dt: number): void {
+  for (const system of systems) {
+    system(registry, dt)
+  }
+}
+// Magic constants like 0.06 are FORBIDDEN — use dt
+```
+
+### Rendering
+```
+// CORRECT: View bridge pattern
+// `game/` systems never import pixi.js
+// `client/` reads registry and creates PixiJS sprites
+// React to events (Phase 2+) or poll via getAllEntities (Phase 1 fallback)
+```
+
+### Castle's 25-field GameState
+```
+// DO NOT REPLICATE THIS PATTERN. It is a known design flaw (Task 1.5).
+// Correct: split into Economy, Population, Happiness components.
+```
+
+---
+
+## Lessons Learned (Context for All Work)
+
+1. **AI agents copy the closest reference game.** If Castle is broken .js, agents will write broken .js. Fix Castle first.
+2. **Common utilities must be utility-shaped, not game-shaped.** MovementSystem broke reusability by importing from the template contract. All common code must be self-contained.
+3. **Perf traps hide in small tests.** Array.shift() passes 10×10 map tests but fails at 500×500. Always think about algorithmic complexity.
+4. **Fixed timestep is non-negotiable.** Magic speed constants break at different frame rates. Every system must receive `dt`.
+5. **Events over polling.** Polling `getAllEntities()` every frame is O(n) on entity count. The event system (Phase 2) enables O(1) reactivity.

@@ -11,6 +11,7 @@ export default defineConfig({
         '..',
         path.resolve(__dirname, 'charchter-spritesheets'),
         path.resolve(__dirname, 'PNG Sequences'),
+        path.resolve(__dirname, 'PNG Tiles'),
       ],
     },
   },
