@@ -2,7 +2,7 @@
 
 Headless ECS 2D game engine — pure data, typed, AI-friendly.
 
-Part of the [Sub-Engine](https://github.com/anomalyco/sub-engine) monorepo.
+Part of the [Sub-Engine](https://github.com/Type-3-studio/sub-engine) monorepo.
 
 ## Install
 
@@ -42,4 +42,4 @@ registry.addComponent(player, 'Velocity', { x: 1, y: 0 })
 
 ## Docs
 
-Full project structure and conventions: [AGENTS.md](https://github.com/anomalyco/sub-engine/blob/main/AGENTS.md)
+Full project structure and conventions: [AGENTS.md](https://github.com/Type-3-studio/sub-engine/blob/main/AGENTS.md)

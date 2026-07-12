@@ -20,11 +20,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anomalyco/sub-engine.git"
+    "url": "git+https://github.com/Type-3-studio/sub-engine.git"
   },
-  "homepage": "https://github.com/anomalyco/sub-engine#readme",
+  "homepage": "https://github.com/Type-3-studio/sub-engine#readme",
   "bugs": {
-    "url": "https://github.com/anomalyco/sub-engine/issues"
+    "url": "https://github.com/Type-3-studio/sub-engine/issues"
   },
   "license": "MIT",
   "keywords": [

@@ -2,7 +2,7 @@
 
 PixiJS 8 rendering bridge for Sub-Engine — responsive containers, sprite sheets, tilemaps, debug overlay.
 
-Part of the [Sub-Engine](https://github.com/anomalyco/sub-engine) monorepo.
+Part of the [Sub-Engine](https://github.com/Type-3-studio/sub-engine) monorepo.
 
 ## Install
 
@@ -42,4 +42,4 @@ app.ticker.add(() => overlay.update())
 
 ## Docs
 
-Full project structure and conventions: [AGENTS.md](https://github.com/anomalyco/sub-engine/blob/main/AGENTS.md)
+Full project structure and conventions: [AGENTS.md](https://github.com/Type-3-studio/sub-engine/blob/main/AGENTS.md)

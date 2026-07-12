@@ -1,6 +1,6 @@
 # My Game
 
-A game built on [Sub-Engine](https://github.com/anomalyco/sub-engine).
+A game built on [Sub-Engine](https://github.com/Type-3-studio/sub-engine).
 
 ## Quick Start
 

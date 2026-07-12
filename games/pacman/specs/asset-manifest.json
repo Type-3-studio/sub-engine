@@ -1,0 +1,231 @@
+{
+  "$schema": "https://sub-engine.dev/asset-manifest-v1.json",
+  "frameWidth": 32,
+  "frameHeight": 32,
+  "animations": [
+    {
+      "name": "pacman_right",
+      "directory": "frames/pacman",
+      "frameCount": 2,
+      "frameRate": 8,
+      "loop": true,
+      "description": "Pac-Man facing right with mouth animation (frame 0=open, frame 1=closed)",
+      "visualHint": "Yellow circle with wedge cut out. Frame 0: wide wedge (open mouth). Frame 1: thin slit (closed mouth).",
+      "frames": [
+        { "index": 0, "filename": "pacman_000.png" },
+        { "index": 1, "filename": "pacman_001.png" }
+      ]
+    },
+    {
+      "name": "pacman_left",
+      "directory": "frames/pacman",
+      "frameCount": 2,
+      "frameRate": 8,
+      "loop": true,
+      "description": "Pac-Man facing left with mouth animation",
+      "visualHint": "Mirror of pacman_right. Yellow circle, wedge cut out on left side.",
+      "frames": [
+        { "index": 0, "filename": "pacman_002.png" },
+        { "index": 1, "filename": "pacman_003.png" }
+      ]
+    },
+    {
+      "name": "pacman_up",
+      "directory": "frames/pacman",
+      "frameCount": 2,
+      "frameRate": 8,
+      "loop": true,
+      "description": "Pac-Man facing up with mouth animation",
+      "visualHint": "Yellow circle, wedge cut out on top side.",
+      "frames": [
+        { "index": 0, "filename": "pacman_004.png" },
+        { "index": 1, "filename": "pacman_005.png" }
+      ]
+    },
+    {
+      "name": "pacman_down",
+      "directory": "frames/pacman",
+      "frameCount": 2,
+      "frameRate": 8,
+      "loop": true,
+      "description": "Pac-Man facing down with mouth animation",
+      "visualHint": "Yellow circle, wedge cut out on bottom side.",
+      "frames": [
+        { "index": 0, "filename": "pacman_006.png" },
+        { "index": 1, "filename": "pacman_007.png" }
+      ]
+    },
+    {
+      "name": "pacman_death",
+      "directory": "frames/pacman",
+      "frameCount": 8,
+      "frameRate": 12,
+      "loop": false,
+      "description": "Pac-Man death animation - shrinking to nothing",
+      "visualHint": "8 frames showing Pac-Man progressively shrinking and fading away.",
+      "frames": [
+        { "index": 0, "filename": "pacman_008.png" },
+        { "index": 1, "filename": "pacman_009.png" },
+        { "index": 2, "filename": "pacman_010.png" },
+        { "index": 3, "filename": "pacman_011.png" },
+        { "index": 4, "filename": "pacman_012.png" },
+        { "index": 5, "filename": "pacman_013.png" },
+        { "index": 6, "filename": "pacman_014.png" },
+        { "index": 7, "filename": "pacman_015.png" }
+      ]
+    },
+    {
+      "name": "ghost_red",
+      "directory": "frames/ghosts",
+      "frameCount": 2,
+      "frameRate": 6,
+      "loop": true,
+      "description": "Blinky (red ghost) - 2-frame wobble animation",
+      "visualHint": "Red ghost shape with white eyes and blue iris. Wavy bottom. Frame 0/1 alternate for floating effect.",
+      "frames": [
+        { "index": 0, "filename": "ghosts_000.png" },
+        { "index": 1, "filename": "ghosts_001.png" }
+      ]
+    },
+    {
+      "name": "ghost_pink",
+      "directory": "frames/ghosts",
+      "frameCount": 2,
+      "frameRate": 6,
+      "loop": true,
+      "description": "Pinky (pink ghost) - 2-frame wobble animation",
+      "visualHint": "Pink ghost shape with white eyes and blue iris. Wavy bottom.",
+      "frames": [
+        { "index": 0, "filename": "ghosts_002.png" },
+        { "index": 1, "filename": "ghosts_003.png" }
+      ]
+    },
+    {
+      "name": "ghost_cyan",
+      "directory": "frames/ghosts",
+      "frameCount": 2,
+      "frameRate": 6,
+      "loop": true,
+      "description": "Inky (cyan ghost) - 2-frame wobble animation",
+      "visualHint": "Cyan/light blue ghost shape with white eyes and blue iris. Wavy bottom.",
+      "frames": [
+        { "index": 0, "filename": "ghosts_004.png" },
+        { "index": 1, "filename": "ghosts_005.png" }
+      ]
+    },
+    {
+      "name": "ghost_orange",
+      "directory": "frames/ghosts",
+      "frameCount": 2,
+      "frameRate": 6,
+      "loop": true,
+      "description": "Clyde (orange ghost) - 2-frame wobble animation",
+      "visualHint": "Orange ghost shape with white eyes and blue iris. Wavy bottom.",
+      "frames": [
+        { "index": 0, "filename": "ghosts_006.png" },
+        { "index": 1, "filename": "ghosts_007.png" }
+      ]
+    },
+    {
+      "name": "ghost_frightened",
+      "directory": "frames/ghosts",
+      "frameCount": 2,
+      "frameRate": 6,
+      "loop": true,
+      "description": "Frightened ghost (vulnerable) - solid blue",
+      "visualHint": "Blue ghost shape with simple dot eyes and wavy mouth. No iris detail. Wavy bottom.",
+      "frames": [
+        { "index": 0, "filename": "ghosts_008.png" },
+        { "index": 1, "filename": "ghosts_009.png" }
+      ]
+    },
+    {
+      "name": "ghost_frightened_end",
+      "directory": "frames/ghosts",
+      "frameCount": 2,
+      "frameRate": 8,
+      "loop": true,
+      "description": "Frightened ghost ending - flashing white/blue (2 frames)",
+      "visualHint": "Alternating frames: one white ghost, one blue ghost. Flashes to warn power mode ending.",
+      "frames": [
+        { "index": 0, "filename": "ghosts_010.png" },
+        { "index": 1, "filename": "ghosts_011.png" }
+      ]
+    },
+    {
+      "name": "ghost_eyes",
+      "directory": "frames/ghosts",
+      "frameCount": 1,
+      "frameRate": 1,
+      "loop": true,
+      "description": "Eaten ghost - just eyes returning to ghost house",
+      "visualHint": "Just two white eyes with blue iris, no body. Moves quickly back to ghost house.",
+      "frames": [
+        { "index": 0, "filename": "ghosts_012.png" }
+      ]
+    },
+    {
+      "name": "pellet",
+      "directory": "frames/pellets",
+      "frameCount": 1,
+      "frameRate": 1,
+      "loop": true,
+      "description": "Small dot pellet - basic score item",
+      "visualHint": "Small light-pink/white circle, about 4px diameter centered in 32x32 frame.",
+      "frames": [
+        { "index": 0, "filename": "pellets_000.png" }
+      ]
+    },
+    {
+      "name": "power_pellet",
+      "directory": "frames/pellets",
+      "frameCount": 4,
+      "frameRate": 5,
+      "loop": true,
+      "description": "Power pellet - pulsing larger dot that lets Pac-Man eat ghosts",
+      "visualHint": "Larger circle that pulses between full size (~12px) and smaller (~6px). Warm white/peach color.",
+      "frames": [
+        { "index": 0, "filename": "pellets_001.png" },
+        { "index": 1, "filename": "pellets_002.png" },
+        { "index": 2, "filename": "pellets_003.png" },
+        { "index": 3, "filename": "pellets_004.png" }
+      ]
+    },
+    {
+      "name": "wall",
+      "directory": "frames/tiles",
+      "frameCount": 1,
+      "frameRate": 1,
+      "loop": true,
+      "description": "Maze wall tile",
+      "visualHint": "Dark blue filled square (32x32) with lighter blue border. Represents maze walls.",
+      "frames": [
+        { "index": 0, "filename": "tiles_000.png" }
+      ]
+    },
+    {
+      "name": "empty",
+      "directory": "frames/tiles",
+      "frameCount": 1,
+      "frameRate": 1,
+      "loop": true,
+      "description": "Empty walkable tile (no pellet)",
+      "visualHint": "Fully transparent 32x32 tile. Used for walkable areas without pellets.",
+      "frames": [
+        { "index": 0, "filename": "tiles_001.png" }
+      ]
+    },
+    {
+      "name": "ghost_door",
+      "directory": "frames/tiles",
+      "frameCount": 1,
+      "frameRate": 1,
+      "loop": true,
+      "description": "Ghost house door - ghosts can pass, Pac-Man cannot",
+      "visualHint": "Horizontal pink/white bar across the middle of the tile. Semi-transparent.",
+      "frames": [
+        { "index": 0, "filename": "tiles_002.png" }
+      ]
+    }
+  ]
+}
