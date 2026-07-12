@@ -4,3 +4,4 @@ dist/
 coverage/
 tests/benchmarks/
 games/my-rpg/
+logs/
