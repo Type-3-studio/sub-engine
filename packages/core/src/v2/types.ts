@@ -162,6 +162,8 @@ export interface App {
   on(type: string, handler: EventHandler): void
   /** Advance the world by one tick of duration `dt` (ms). */
   step(dt: number): void
+  /** Systems in deterministic execution order (computed once). */
+  systems(): readonly SystemDef[]
   /** Deterministic execution order (computed once). */
   systemOrder(): string[]
   hash(): string

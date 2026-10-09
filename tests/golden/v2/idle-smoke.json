@@ -1,0 +1,9 @@
+{
+  "name": "idle-smoke",
+  "engineVersion": "sha256:56fe58e7d560e2bebf827988be2af242423633d32f933129a859581701d3aef8",
+  "seed": 12345,
+  "dt": 16,
+  "ticks": 100,
+  "intents": [],
+  "hash": "sha256:75afbed8ed6dd111bccc7bad16e151ab9c938f9502c06307d050e667884dbf35"
+}

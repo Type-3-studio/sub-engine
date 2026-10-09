@@ -7,6 +7,7 @@
 import { createWorld } from './world.js'
 import { createRng } from './rng.js'
 import { orderSystems } from './scheduler.js'
+import { withDeterminismGuard } from './guard.js'
 import type {
   App,
   AppOptions,
@@ -176,7 +177,8 @@ export function createApp(options: AppOptions = {}): App {
           events,
           time,
         }
-        system.run(ctx, dt)
+        if (strict) withDeterminismGuard(system.name, () => system.run(ctx, dt))
+        else system.run(ctx, dt)
       }
 
       tick++
@@ -185,6 +187,10 @@ export function createApp(options: AppOptions = {}): App {
 
     systemOrder(): string[] {
       return ensureOrder().map((s) => s.name)
+    },
+
+    systems(): readonly SystemDef[] {
+      return ensureOrder()
     },
 
     hash(): string {

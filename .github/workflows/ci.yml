@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main, v2]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test (includes the v2 golden replay)
+        run: npm test
+
+      - name: Headless v2 hello (proves the sim runs with no browser)
+        run: npm run v2:hello
+
+      - name: Build packages
+        run: npm run build:pkgs
+
+      - name: Size budget
+        run: npm run size:check

@@ -20,6 +20,6 @@
       "@sub-engine/pixi": ["./packages/pixi/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "games/**/*.ts", "tests/**/*.ts", "packages/**/*.ts"],
+  "include": ["src/**/*.ts", "games/**/*.ts", "tests/**/*.ts", "packages/**/*.ts", "scripts/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

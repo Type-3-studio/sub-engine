@@ -32,7 +32,11 @@
     "build:pkgs": "npm run build -w packages/core && npm run build -w packages/pixi",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "v2:hello": "tsx scripts/v2/hello.ts",
+    "golden:record": "RECORD_GOLDEN=1 vitest run tests/v2/golden.test.ts",
+    "size:check": "node scripts/ci/size-budget.mjs"
   },
   "devDependencies": {
     "pixi.js": "^8.19.0",
