@@ -5,3 +5,6 @@ coverage/
 tests/benchmarks/
 games/my-rpg/
 logs/
+
+# Studio strategy, licensing, business & secrets — NEVER part of the open-source base.
+private-docs/

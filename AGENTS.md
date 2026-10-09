@@ -63,10 +63,14 @@
 │   ├── scrap-swarm/             #   Large-scale RTS swarm combat (stress test)
 │   ├── my-rpg/                  #   Altar-defender RPG with composite visuals
 │   └── red-alert-clone/         #   C&C-inspired RTS
-├── docs/                        # Architecture docs, retrospectives, plans
+├── docs/                        # Public docs
 │   ├── scrap-swarm-retrospective.md
-│   ├── engine-review-summary.md
-│   └── architecture/            #   ADRs, RFCs, technical debt register
+│   └── brand/                   #   Rendered identity plates (from brand/)
+├── brand/                       # Identity system — parametric source for assets/
+│   ├── marks.mjs                #   The mark, its 16px cut, and every variant
+│   ├── explore.mjs / kit.mjs / spec.mjs / og.mjs
+│   └── export.mjs               #   Writes brand/assets/
+├── assets/                      # Brand assets installed for README + npm
 ├── tests/                       # Engine tests (201 vitest tests)
 ├── src/                         # Root dev playground
 │   ├── game/                    #   Template game code
@@ -147,6 +151,25 @@ These shortcuts are hard-coded in `DebugOverlay.ts` and must be identical across
 
 Backtick (\`) is the fallback when F12 is captured by the browser (e.g., Chrome DevTools).
 
+## Brand
+
+The identity is generated, not hand-drawn. `brand/` is the source of truth and
+`assets/` is an installed copy — never edit an asset in `assets/` directly.
+
+```bash
+brand/render.sh     # regenerate every plate, the card, assets/ and package assets
+```
+
+| Rule | Detail |
+|------|--------|
+| BDL-001 | The mark is `brand/marks.mjs` `MARK` — edit the geometry there, not the SVGs |
+| BDL-002 | Solar orange `#FF5A1F` is the **only** accent. One per surface. |
+| BDL-003 | Shipped assets are renderer-independent: outlined wordmark, literal hex, no `var()` |
+| BDL-004 | Below 32px use `favicon.svg` (the designed cut), never the primary mark scaled |
+| BDL-005 | Never stretch, rotate, recolour, or let type into the 8-unit clearspace |
+
+See `brand/README.md` for the full system.
+
 ## Design Rules (locked — do not reverse)
 
 | ID | Rule | Rationale |
@@ -205,7 +228,7 @@ The template produces a standalone project with `@sub-engine/core` and `@sub-eng
 
 ## Retrospective
 
-A full postmortem of the Scrap Swarm game is at `docs/scrap-swarm-retrospective.md` and `docs/engine-review-summary.md` — read before building new games. They document 6 memory/movement bugs found during development, their root causes, the engine gaps that allowed them, and a checklist for future games.
+A full postmortem of the Scrap Swarm game is at `docs/scrap-swarm-retrospective.md` — read before building new games. It documents 6 memory/movement bugs found during development, their root causes, the engine gaps that allowed them, and a checklist for future games.
 
 ## Performance & Memory
 
