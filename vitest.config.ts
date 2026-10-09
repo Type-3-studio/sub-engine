@@ -7,6 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
   resolve: {
     alias: {
+      '@sub-engine/core/v2': path.resolve(__dirname, 'packages/core/src/v2/index.ts'),
       '@sub-engine/core': path.resolve(__dirname, 'packages/core/src/index.ts'),
       '@sub-engine/pixi': path.resolve(__dirname, 'packages/pixi/src/index.ts'),
     },

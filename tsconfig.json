@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@sub-engine/core": ["./packages/core/src/index.ts"],
+      "@sub-engine/core/v2": ["./packages/core/src/v2/index.ts"],
       "@sub-engine/pixi": ["./packages/pixi/src/index.ts"]
     }
   },
