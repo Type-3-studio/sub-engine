@@ -83,8 +83,90 @@ export interface Snapshot {
 }
 
 // ---------------------------------------------------------------------------
-// World API (I1.3)
+// I3 Determinism Kit
 // ---------------------------------------------------------------------------
+
+/** A seeded random stream. Never `Math.random` (I3.5). */
+export interface Rng {
+  /** Next raw 32-bit unsigned integer. */
+  uint32(): number
+  /** Next value in `[0, 1)` — exact in f64 (`uint32 / 2^32`). */
+  next(): number
+  /** Uniform integer in `[min, maxExclusive)`. */
+  int(min: number, maxExclusive: number): number
+  bool(p: number): boolean
+  pick<T>(items: readonly T[]): T
+  /** Derive an independent, named stream. */
+  fork(label: string): Rng
+}
+
+/** Injected simulation time. `elapsedMs = tick * dt` — there is no other source. */
+export interface SimTime {
+  readonly tick: number
+  readonly dt: number
+}
+
+// ---------------------------------------------------------------------------
+// I2 System Contract
+// ---------------------------------------------------------------------------
+
+/** Queues an event during a tick; delivered at the tick boundary (I2.3). */
+export interface EventWriter {
+  emit(type: string, payload?: JsonObject): void
+}
+
+export interface SystemContext {
+  readonly world: World
+  readonly rng: Rng
+  readonly events: EventWriter
+  readonly time: SimTime
+}
+
+/**
+ * A pure function over the world with a declared `reads / writes / emits`
+ * contract. The scheduler orders systems from these declarations (I2.2);
+ * strict mode enforces they are accurate (I2.4).
+ */
+export interface SystemDef {
+  readonly name: string
+  readonly version: number
+  readonly reads: readonly string[]
+  readonly writes: readonly string[]
+  readonly emits: readonly string[]
+  run(ctx: SystemContext, dt: number): void
+}
+
+/** An emitted event, as delivered to handlers at the tick boundary. */
+export interface GameEvent {
+  readonly type: string
+  readonly payload: JsonObject
+}
+
+export type EventHandler = (ctx: SystemContext, event: GameEvent) => void
+
+export interface AppOptions {
+  schemas?: readonly ComponentSchema[]
+  seed?: number
+  /**
+   * Enforce system access contracts. Defaults to true in tests/dev; set false
+   * for production builds (I2.4, zero overhead).
+   */
+  strict?: boolean
+}
+
+/** A running world: fixed system set, events, injected time (I2.5). */
+export interface App {
+  readonly world: World
+  readonly tick: number
+  use(system: SystemDef): void
+  on(type: string, handler: EventHandler): void
+  /** Advance the world by one tick of duration `dt` (ms). */
+  step(dt: number): void
+  /** Deterministic execution order (computed once). */
+  systemOrder(): string[]
+  hash(): string
+}
+
 
 export interface WorldOptions {
   /** Schemas to make available to this world. Registered globally by name. */
