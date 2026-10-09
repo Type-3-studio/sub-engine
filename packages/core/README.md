@@ -1,6 +1,11 @@
-# @sub-engine/core
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Type-3-studio/sub-engine/main/assets/logo-lockup-inverse.svg" alt="Sub-Engine" width="320">
+</p>
 
-Headless ECS 2D game engine — pure data, typed, AI-friendly.
+# `@sub-engine/core`
+
+**Headless ECS 2D game engine** — pure data, typed, AI-friendly. Zero
+dependencies, zero browser APIs, one job: be the substrate your game runs on.
 
 Part of the [Sub-Engine](https://github.com/Type-3-studio/sub-engine) monorepo.
 

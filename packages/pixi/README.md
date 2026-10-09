@@ -1,6 +1,12 @@
-# @sub-engine/pixi
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Type-3-studio/sub-engine/main/assets/logo-lockup-inverse.svg" alt="Sub-Engine" width="320">
+</p>
 
-PixiJS 8 rendering bridge for Sub-Engine — responsive containers, sprite sheets, tilemaps, debug overlay.
+# `@sub-engine/pixi`
+
+**PixiJS 8 rendering bridge for Sub-Engine** — responsive containers, sprite
+sheets, tilemaps, debug overlay. Everything that touches pixels; nothing that
+touches your simulation.
 
 Part of the [Sub-Engine](https://github.com/Type-3-studio/sub-engine) monorepo.
 

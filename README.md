@@ -1,15 +1,55 @@
-# Sub-Engine
+<p align="center">
+  <img src="assets/logo-lockup.svg" alt="Sub-Engine" width="380">
+</p>
 
-**AI-first, pure-data ECS 2D game engine** — headless core with optional PixiJS rendering bridge.
+<p align="center">
+  <b>The layer beneath the game.</b><br>
+  <sub>AI-first, pure-data ECS 2D engine — headless core with an optional PixiJS bridge.</sub>
+</p>
 
-[![npm](https://img.shields.io/npm/v/@sub-engine/core)](https://www.npmjs.com/package/@sub-engine/core)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)](tsconfig.json)
+<p align="center">
+  <a href="#packages"><img src="https://img.shields.io/badge/packages-3-FF5A1F?style=flat-square" alt="packages"></a>
+  <a href="https://www.npmjs.com/package/@sub-engine/core"><img src="https://img.shields.io/npm/v/@sub-engine/core?style=flat-square&label=core" alt="@sub-engine/core"></a>
+  <a href="https://www.npmjs.com/package/@sub-engine/pixi"><img src="https://img.shields.io/npm/v/@sub-engine/pixi?style=flat-square&label=pixi" alt="@sub-engine/pixi"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-FF5A1F?style=flat-square" alt="MIT"></a>
+  <img src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square" alt="TypeScript strict">
+  <img src="https://img.shields.io/badge/tests-201-8A8A93?style=flat-square" alt="201 tests">
+  <img src="https://img.shields.io/badge/core_dependencies-0-FF5A1F?style=flat-square" alt="zero dependencies">
+  <img src="https://img.shields.io/badge/Type-3_Studio-FF5A1F?style=flat-square" alt="by Type-3 Studio">
+</p>
+
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#why">Why</a> ·
+  <a href="#reference-games">Reference games</a> ·
+  <a href="brand/README.md">Identity</a>
+</p>
+
+---
 
 ```bash
 npx create-sub-engine my-game
 cd my-game && npm install && npm run dev
 ```
+
+## Why
+
+Most 2D engines make you choose between a simulation you can test and a game
+you can look at. Sub-Engine doesn't: the simulation is pure data and runs in
+Node, and PixiJS is a bridge you attach when you want pixels.
+
+- **Entities are integers.** There is no object graph to serialise, diff or
+  inspect. An agent can read the entire world state as JSON and write it back.
+- **The core has zero dependencies.** `@sub-engine/core` has no `dependencies`
+  field at all and will not touch `window`. Simulation logic runs in a test, a
+  CI job or a game server.
+- **Systems are pure functions.** `(registry, dt) => registry`. No hidden state,
+  no lifecycle, nothing to mock.
+- **Every write is validated.** Schemas are registered once; a typo in a
+  component name throws at the call site instead of at 3am.
+- **Typing is structural.** `Registry<M>` is parameterised by your
+  `ComponentMap`, so `getEntitiesWith` destructures to exactly the components
+  the query asked for.
 
 ## Packages
 
@@ -90,7 +130,7 @@ Read `games/tower-defense/` first — it's the most complete reference.
 npm install           # Install workspace
 npm run dev           # Root playground (arrow key movement demo)
 npm run typecheck     # Full type check (0 errors)
-npm test              # Run 187 engine tests
+npm test              # Run 201 engine tests
 npm run build:pkgs    # Build both packages to dist/
 ```
 
@@ -102,11 +142,34 @@ npm run build:pkgs    # Build both packages to dist/
 │   ├── pixi/            # @sub-engine/pixi (rendering bridge)
 │   └── create-app/      # create-sub-engine CLI + template
 ├── games/               # 10 reference implementations
-├── tests/               # 187 engine tests (vitest)
+├── tests/               # 201 engine tests (vitest)
 ├── src/                 # Root dev playground
 ├── package.json         # Workspace root
 └── tsconfig.json
 ```
+
+## Identity
+
+The mark is a **block in section** — two seams the data rests on, one gate
+every system crosses, one entity in flight.
+
+<p align="center">
+  <img src="docs/brand/02-brand-system.png" alt="Sub-Engine brand system" width="100%">
+</p>
+
+Assets live in [`assets/`](assets) and the full system — exploration,
+construction, specification and the rules it ships under — is in
+[`brand/`](brand).
+
+| | |
+|---|---|
+| ![lockup](assets/logo-lockup.svg) | `assets/logo-lockup.svg` |
+| ![mark](assets/logo-mark.svg) | `assets/logo-mark.svg` — 32px and up |
+| ![inverse](assets/logo-mark-inverse.svg) | `assets/logo-mark-inverse.svg` — dark surfaces |
+| ![favicon](assets/favicon.svg) | `assets/favicon.svg` — the designed 16px cut |
+
+Solar orange `#FF5A1F` is inherited from [Type-3 Studio](https://type3.studio);
+everything else is Sub-Engine's own.
 
 ## License
 

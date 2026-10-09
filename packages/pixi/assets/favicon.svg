@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="none">
+<title>Sub-Engine</title>
+<desc>The 16px cut: seams redrawn at 12u, pip grown to Ø30.</desc>
+<g transform="translate(0 0) scale(1)"><path d="M6 6H94V26H6Z" fill="#0B0B0D"/><path d="M6 38H60V62H6Z" fill="#0B0B0D"/><path d="M6 74H94V94H6Z" fill="#0B0B0D"/><circle cx="77" cy="50" r="15" fill="#FF5A1F"/></g>
+</svg>
